@@ -527,7 +527,7 @@ const Home = () => {
                     borderRadius: '50px'
                   }}
                 >
-                  Since 1974
+                  Since 1975
                 </Badge>
                 
                 <h1 style={{
@@ -549,7 +549,7 @@ const Home = () => {
                   marginBottom: '30px',
                   fontWeight: '300'
                 }}>
-                  Authentic taste since 1974
+                  Authentic taste since 1975
                 </p>
 
                 <Link to="/chikki">
