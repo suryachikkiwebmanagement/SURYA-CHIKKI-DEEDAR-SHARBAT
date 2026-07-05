@@ -11,7 +11,7 @@ import pcBanner1 from '../assets/images/pcbanners  (1).png';
 import pcBanner2 from '../assets/images/pcbanners  (2).png';
 import pcBanner3 from '../assets/images/pcbanners  (3).png';
 import pcBanner4 from '../assets/images/pcbanners  (4).png';
-import pcBanner5 from '../assets/images/pcbanners  (5).png';
+import pcBanner5 from '../assets/images/pcbanners  (3).png';
 import followUsImg from '../assets/images/followusimg.png';
 
 // Import Traditional Chikki images (JPEG)
