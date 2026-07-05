@@ -1,0 +1,34 @@
+﻿{
+  "name": "Surya Chikki - Authentic Sweet Chikki",
+  "short_name": "Surya Chikki",
+  "description": "Authentic sweet chikki made with love since 1974",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#DC143C",
+  "theme_color": "#DC143C",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/favicon-32x32.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    },
+    {
+      "src": "/icons/favicon-16x16.png",
+      "type": "image/png",
+      "sizes": "16x16"
+    }
+  ]
+}
