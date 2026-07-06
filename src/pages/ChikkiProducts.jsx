@@ -166,10 +166,11 @@ const ChikkiProducts = () => {
   const handleInquiryClick = (product) => {
     setSelectedProduct(product);
     setShowInquiryModal(true);
-    // Pre-fill message with product details
+    // Get the full image URL
+    const imageUrl = window.location.origin + product.image;
     setInquiryData(prev => ({
       ...prev,
-      message: `I'm interested in: ${product.name}\nCategory: ${product.category}\nDescription: ${product.description || 'N/A'}\n\nPlease provide more information about pricing and availability.`
+      message: `I'm interested in: ${product.name}\nCategory: ${product.category}\nDescription: ${product.description || 'N/A'}\nProduct Image: ${imageUrl}\n\nPlease provide more information about pricing and availability.`
     }));
   };
 
@@ -182,23 +183,23 @@ const ChikkiProducts = () => {
     }));
   };
 
-  // Handle email submission
-  const handleEmailSubmit = (e) => {
-    e.preventDefault();
+  // Handle email submission - WITH IMAGE LINK
+  const handleEmailSubmit = () => {
     const { name, email, address, message } = inquiryData;
+    const imageUrl = window.location.origin + selectedProduct?.image;
     const subject = `Inquiry about ${selectedProduct?.name || 'Chikki Products'}`;
-    const body = `Name: ${name}\nEmail: ${email}\nAddress: ${address}\n\nProduct Details:\nProduct: ${selectedProduct?.name || 'N/A'}\nCategory: ${selectedProduct?.category || 'N/A'}\nDescription: ${selectedProduct?.description || 'N/A'}\n\nMessage:\n${message}`;
+    const body = `Name: ${name}\nEmail: ${email}\nAddress: ${address}\n\nProduct Details:\nProduct: ${selectedProduct?.name || 'N/A'}\nCategory: ${selectedProduct?.category || 'N/A'}\nDescription: ${selectedProduct?.description || 'N/A'}\nProduct Image URL: ${imageUrl}\n\nMessage:\n${message}`;
     
     window.location.href = `mailto:suryachikki.admin@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     setShowInquiryModal(false);
     resetForm();
   };
 
-  // Handle WhatsApp submission
-  const handleWhatsAppSubmit = (e) => {
-    e.preventDefault();
+  // Handle WhatsApp submission - WITH IMAGE LINK
+  const handleWhatsAppSubmit = () => {
     const { name, email, address, message } = inquiryData;
-    const phoneNumber = '+91 9429946364'; // Replace with actual phone number
+    const phoneNumber = '919429946364';
+    const imageUrl = window.location.origin + selectedProduct?.image;
     
     const whatsappMessage = `*Inquiry about ${selectedProduct?.name || 'Chikki Products'}*\n\n` +
       `*Name:* ${name}\n` +
@@ -207,10 +208,18 @@ const ChikkiProducts = () => {
       `*Product Details:*\n` +
       `Product: ${selectedProduct?.name || 'N/A'}\n` +
       `Category: ${selectedProduct?.category || 'N/A'}\n` +
-      `Description: ${selectedProduct?.description || 'N/A'}\n\n` +
+      `Description: ${selectedProduct?.description || 'N/A'}\n` +
+      `Product Image: ${imageUrl}\n\n` +
       `*Message:*\n${message}`;
     
-    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
+    const waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+    
+    if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
+      window.location.href = waUrl;
+    } else {
+      window.open(waUrl, '_blank');
+    }
+    
     setShowInquiryModal(false);
     resetForm();
   };
@@ -326,11 +335,11 @@ const ChikkiProducts = () => {
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)';
                 }}>
-                  {/* Image Container - FIXED */}
+                  {/* Image Container */}
                   <div style={{
                     position: 'relative',
                     width: '100%',
-                    height: '300px', // Fixed height
+                    height: '300px',
                     background: '#f8f9fa',
                     overflow: 'hidden',
                     display: 'flex',
@@ -343,9 +352,9 @@ const ChikkiProducts = () => {
                       style={{
                         width: '100%',
                         height: '100%',
-                        objectFit: 'contain', // Changed from 'cover' to 'contain'
+                        objectFit: 'contain',
                         objectPosition: 'center',
-                        padding: '10px' // Added padding for better presentation
+                        padding: '10px'
                       }}
                       onError={(e) => handleImageError(product.id, e)}
                       onLoad={() => console.log(`✅ Loaded: ${product.name}`)}
@@ -404,7 +413,7 @@ const ChikkiProducts = () => {
                         {product.category}
                       </Badge>
                       
-                      {/* Inquiry Button - Now on each product */}
+                      {/* Inquiry Button */}
                       <Button
                         onClick={() => handleInquiryClick(product)}
                         style={{
@@ -457,7 +466,7 @@ const ChikkiProducts = () => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body style={{ padding: '30px' }}>
-            {/* Product Details Display */}
+            {/* Product Details Display with Image Preview */}
             {selectedProduct && (
               <div style={{
                 background: '#FFF8F8',
@@ -466,16 +475,46 @@ const ChikkiProducts = () => {
                 marginBottom: '20px',
                 borderLeft: '4px solid #DC143C'
               }}>
-                <h6 style={{ fontWeight: '700', color: '#1a1a2e' }}>Product Details:</h6>
-                <p style={{ marginBottom: '5px' }}>
-                  <strong>Product:</strong> {selectedProduct.name}
-                </p>
-                <p style={{ marginBottom: '5px' }}>
-                  <strong>Category:</strong> {selectedProduct.category}
-                </p>
-                <p style={{ marginBottom: '0' }}>
-                  <strong>Description:</strong> {selectedProduct.description || 'N/A'}
-                </p>
+                <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
+                  {/* Product Image Preview in Modal */}
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    background: '#f0f0f0',
+                    flexShrink: 0
+                  }}>
+                    <img
+                      src={selectedProduct.image}
+                      alt={selectedProduct.name}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        padding: '5px'
+                      }}
+                      onError={(e) => {
+                        e.target.src = 'https://via.placeholder.com/80x80/FF6B6B/FFFFFF?text=Chikki';
+                      }}
+                    />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h6 style={{ fontWeight: '700', color: '#1a1a2e' }}>Product Details:</h6>
+                    <p style={{ marginBottom: '5px' }}>
+                      <strong>Product:</strong> {selectedProduct.name}
+                    </p>
+                    <p style={{ marginBottom: '5px' }}>
+                      <strong>Category:</strong> {selectedProduct.category}
+                    </p>
+                    <p style={{ marginBottom: '5px' }}>
+                      <strong>Description:</strong> {selectedProduct.description || 'N/A'}
+                    </p>
+                    <p style={{ marginBottom: '0', fontSize: '12px', color: '#666' }}>
+                      <strong>Image URL:</strong> {window.location.origin + selectedProduct.image}
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -544,7 +583,7 @@ const ChikkiProducts = () => {
                 marginBottom: '20px'
               }}>
                 <p style={{ marginBottom: '0', fontSize: '14px', color: '#666' }}>
-                  <strong>📌 Note:</strong> Your inquiry will be sent with product details automatically included.
+                  <strong>📌 Note:</strong> Product image URL will be included with your inquiry.
                 </p>
               </div>
 

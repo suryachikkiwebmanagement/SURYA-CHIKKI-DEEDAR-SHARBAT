@@ -5,31 +5,268 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- ===== FAVICON - Your PNG files ===== -->
+    <!-- ===== FAVICON ===== -->
     <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
     
+    <!-- ===== THEME COLOR ===== -->
     <meta name="theme-color" content="#DC143C" />
-    <meta name="description" content="Surya Chikki - Authentic sweet chikki made with love since 1974" />
     
-    <title>Surya Chikki - Authentic Sweet Chikki & Refreshing Sharbat</title>
+    <!-- ===== PRIMARY META TAGS ===== -->
+    <meta name="description" content="Surya Chikki - Authentic sweet chikki, peanut chikki, til chikki, and refreshing sharbat made with love since 1974. Premium quality traditional Indian sweets." />
+    <meta name="keywords" content="Surya Chikki, authentic chikki, peanut chikki, til chikki, sharbat, Indian sweets, traditional sweets, Deedar Sharbat, premium chikki, sweet shop, traditional Indian dessert" />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Surya Chikki" />
+    <link rel="canonical" href="https://suryachikki.com" />
     
-    <meta property="og:title" content="Surya Chikki - Authentic Sweet Chikki" />
-    <meta property="og:description" content="Authentic sweet chikki made with love since 1974" />
-    <meta property="og:image" content="/icons/logo512.png" />
+    <!-- ===== OPEN GRAPH / FACEBOOK ===== -->
+    <meta property="og:title" content="Surya Chikki - Authentic Sweet Chikki &amp; Refreshing Sharbat" />
+    <meta property="og:description" content="Surya Chikki - Authentic sweet chikki, peanut chikki, til chikki, and refreshing sharbat made with love since 1974. Premium quality traditional Indian sweets." />
+    <meta property="og:image" content="https://suryachikki.com/icons/logo512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
     <meta property="og:url" content="https://suryachikki.com" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Surya Chikki" />
+    <meta property="og:locale" content="en_IN" />
     
+    <!-- ===== TWITTER CARDS ===== -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Surya Chikki - Authentic Sweet Chikki" />
-    <meta name="twitter:description" content="Authentic sweet chikki made with love since 1974" />
-    <meta name="twitter:image" content="/icons/logo512.png" />
+    <meta name="twitter:title" content="Surya Chikki - Authentic Sweet Chikki &amp; Refreshing Sharbat" />
+    <meta name="twitter:description" content="Surya Chikki - Authentic sweet chikki, peanut chikki, til chikki, and refreshing sharbat made with love since 1974." />
+    <meta name="twitter:image" content="https://suryachikki.com/icons/logo512.png" />
+    <meta name="twitter:site" content="@suryachikki" />
+    <meta name="twitter:creator" content="@suryachikki" />
+    
+    <!-- ===== ADDITIONAL META TAGS ===== -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=yes" />
+    <meta name="geo.region" content="IN" />
+    <meta name="geo.placename" content="India" />
+    
+    <!-- ===== JSON-LD STRUCTURED DATA - ORGANIZATION ===== -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Surya Chikki",
+        "url": "https://suryachikki.com",
+        "logo": "https://suryachikki.com/icons/logo512.png",
+        "description": "Authentic sweet chikki, peanut chikki, til chikki, and refreshing sharbat made with love since 1974",
+        "foundingDate": "1974",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "India"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+91-9429946364",
+          "contactType": "sales",
+          "availableLanguage": ["English", "Hindi"]
+        },
+        "sameAs": [
+          "https://www.facebook.com/suryachikki",
+          "https://www.instagram.com/suryachikki",
+          "https://www.youtube.com/@suryachikki"
+        ]
+      }
+    </script>
+    
+    <!-- ===== JSON-LD STRUCTURED DATA - WEBSITE ===== -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Surya Chikki",
+        "url": "https://suryachikki.com",
+        "description": "Authentic sweet chikki and sharbat since 1974",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://suryachikki.com/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+    
+    <!-- ===== JSON-LD STRUCTURED DATA - PRODUCTS ===== -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "Surya Chikki Products",
+        "description": "Our authentic chikki and sharbat collection",
+        "numberOfItems": 23,
+        "itemListElement": [
+          {
+            "@type": "Product",
+            "position": 1,
+            "name": "Till Chikki",
+            "description": "Traditional sesame seed chikki with authentic taste",
+            "image": "https://suryachikki.com/images/chikki/images(1).jpeg",
+            "category": "Chikki",
+            "brand": {
+              "@type": "Brand",
+              "name": "Surya Chikki"
+            }
+          },
+          {
+            "@type": "Product",
+            "position": 2,
+            "name": "Peanut Dry Fruit Chikki",
+            "description": "Crunchy peanut with dry fruits for extra nutrition",
+            "image": "https://suryachikki.com/images/chikki/images(2).jpeg",
+            "category": "Chikki",
+            "brand": {
+              "@type": "Brand",
+              "name": "Surya Chikki"
+            }
+          },
+          {
+            "@type": "Product",
+            "position": 3,
+            "name": "Dates Chikki",
+            "description": "Sweet and healthy dates chikki with natural sweetness",
+            "image": "https://suryachikki.com/images/chikki/images(3).jpeg",
+            "category": "Chikki",
+            "brand": {
+              "@type": "Brand",
+              "name": "Surya Chikki"
+            }
+          },
+          {
+            "@type": "Product",
+            "position": 4,
+            "name": "Orange Sharbat",
+            "description": "Refreshing orange sharbat with natural flavors",
+            "image": "https://suryachikki.com/images/sharbat/images(18).jpeg",
+            "category": "Sharbat",
+            "brand": {
+              "@type": "Brand",
+              "name": "Surya Chikki"
+            }
+          },
+          {
+            "@type": "Product",
+            "position": 5,
+            "name": "Mango Sharbat",
+            "description": "Authentic mango sharbat made from real mangoes",
+            "image": "https://suryachikki.com/images/sharbat/images(19).jpeg",
+            "category": "Sharbat",
+            "brand": {
+              "@type": "Brand",
+              "name": "Surya Chikki"
+            }
+          },
+          {
+            "@type": "Product",
+            "position": 6,
+            "name": "Varyali Sharbat",
+            "description": "Traditional Varyali sharbat with unique taste",
+            "image": "https://suryachikki.com/images/sharbat/images(20).jpeg",
+            "category": "Sharbat",
+            "brand": {
+              "@type": "Brand",
+              "name": "Surya Chikki"
+            }
+          },
+          {
+            "@type": "Product",
+            "position": 7,
+            "name": "Nimbu Sharbat",
+            "description": "Tangy lemon sharbat perfect for summer",
+            "image": "https://suryachikki.com/images/sharbat/images(21).jpeg",
+            "category": "Sharbat",
+            "brand": {
+              "@type": "Brand",
+              "name": "Surya Chikki"
+            }
+          },
+          {
+            "@type": "Product",
+            "position": 8,
+            "name": "Shabi Rose Sharbat",
+            "description": "Fragrant rose sharbat with a delightful aroma",
+            "image": "https://suryachikki.com/images/sharbat/images(22).jpeg",
+            "category": "Sharbat",
+            "brand": {
+              "@type": "Brand",
+              "name": "Surya Chikki"
+            }
+          }
+        ]
+      }
+    </script>
+    
+    <!-- ===== JSON-LD STRUCTURED DATA - BREADCRUMB ===== -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://suryachikki.com"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Chikki",
+            "item": "https://suryachikki.com#chikki"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Sharbat",
+            "item": "https://suryachikki.com#sharbat"
+          }
+        ]
+      }
+    </script>
+    
+    <!-- ===== JSON-LD STRUCTURED DATA - LOCAL BUSINESS ===== -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Surya Chikki",
+        "image": "https://suryachikki.com/icons/logo512.png",
+        "description": "Authentic sweet chikki and sharbat since 1974",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "India"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": "20.5937",
+          "longitude": "78.9629"
+        },
+        "openingHours": "Mo-Su 08:00-21:00",
+        "telephone": "+91-9429946364"
+      }
+    </script>
+    
+    <!-- ===== SITEMAP ===== -->
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+    
+    <!-- ===== TITLE ===== -->
+    <title>Surya Chikki - Authentic Sweet Chikki &amp; Refreshing Sharbat Since 1974</title>
+    
+    <!-- ===== PRELOAD CRITICAL ASSETS ===== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- ===== PRELOAD LOGO ===== -->
+    <link rel="preload" as="image" href="/icons/logo512.png" />
   </head>
   <body>
     <div id="root"></div>
-    <!-- ? Vite will inject the script automatically -->
-     <script type="module" src="/src/main.jsx"></script>
+    <!-- Vite will inject the script automatically -->
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
