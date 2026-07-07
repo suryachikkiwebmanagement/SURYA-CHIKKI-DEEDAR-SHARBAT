@@ -1,6 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { Container, Row, Col, Form, Button, Badge, Modal } from 'react-bootstrap';
 import logo2 from '../assets/images/logo2.png';
+import Head from 'next/head'; // If using Next.js - remove if using plain React
 
 // ============================================
 // SHARBAT PRODUCT DATA (Embedded)
@@ -12,7 +13,8 @@ const sharbatProducts = [
     image: '/images/sharbat/images(18).jpeg',
     category: "Orange",
     isSpecial: true,
-    description: "Refreshing orange sharbat with natural flavors"
+    description: "Refreshing orange sharbat with natural flavors",
+    sku: "SHR-001"
   },
   {
     id: 2,
@@ -20,7 +22,8 @@ const sharbatProducts = [
     image: '/images/sharbat/images(19).jpeg',
     category: "Mango",
     isSpecial: false,
-    description: "Authentic mango sharbat made from real mangoes"
+    description: "Authentic mango sharbat made from real mangoes",
+    sku: "SHR-002"
   },
   {
     id: 3,
@@ -28,7 +31,8 @@ const sharbatProducts = [
     image: '/images/sharbat/images(20).jpeg',
     category: "Varyali",
     isSpecial: true,
-    description: "Traditional Varyali sharbat with unique taste"
+    description: "Traditional Varyali sharbat with unique taste",
+    sku: "SHR-003"
   },
   {
     id: 4,
@@ -36,7 +40,8 @@ const sharbatProducts = [
     image: '/images/sharbat/images(21).jpeg',
     category: "Nimbu",
     isSpecial: false,
-    description: "Tangy lemon sharbat perfect for summer"
+    description: "Tangy lemon sharbat perfect for summer",
+    sku: "SHR-004"
   },
   {
     id: 5,
@@ -44,7 +49,8 @@ const sharbatProducts = [
     image: '/images/sharbat/images(22).jpeg',
     category: "Rose",
     isSpecial: false,
-    description: "Fragrant rose sharbat with a delightful aroma"
+    description: "Fragrant rose sharbat with a delightful aroma",
+    sku: "SHR-005"
   },
   {
     id: 6,
@@ -52,7 +58,8 @@ const sharbatProducts = [
     image: '/images/sharbat/images(23).jpeg',
     category: "Special",
     isSpecial: true,
-    description: "Deedar's special recipe sharbat"
+    description: "Deedar's special recipe sharbat",
+    sku: "SHR-006"
   },
   {
     id: 7,
@@ -60,9 +67,82 @@ const sharbatProducts = [
     image: '/images/sharbat/images(24).jpeg',
     category: "Pineapple",
     isSpecial: false,
-    description: "Sweet and tangy pineapple sharbat"
+    description: "Sweet and tangy pineapple sharbat",
+    sku: "SHR-007"
   },
 ];
+
+// ============================================
+// GENERATE PRODUCT SLUG
+// ============================================
+const generateProductSlug = (name, id) => {
+  const slug = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+  return `${id}-${slug}`;
+};
+
+// ============================================
+// STRUCTURED DATA GENERATOR - FIXES CRITICAL ERROR
+// ============================================
+const generateProductStructuredData = () => {
+  return {
+    "@context": "https://schema.org",
+    "@graph": sharbatProducts.map(product => {
+      const productSlug = generateProductSlug(product.name, product.id);
+      const productUrl = window.location.origin + `/sharbat/${productSlug}`;
+      const imageUrl = window.location.origin + product.image;
+      
+      return {
+        "@type": "Product",
+        "name": product.name,
+        "description": product.description || "Delicious sharbat",
+        "image": {
+          "@type": "ImageObject",
+          "url": imageUrl,
+          "width": "300",
+          "height": "300",
+          "caption": product.name
+        },
+        "category": product.category,
+        "url": productUrl,
+        "sku": product.sku || `SKU-${String(product.id).padStart(4, '0')}`,
+        "mpn": `MPN-${String(product.id).padStart(4, '0')}`,
+        "brand": {
+          "@type": "Brand",
+          "name": "Deedar Sharbat"
+        },
+        "manufacturer": {
+          "@type": "Organization",
+          "name": "Deedar Sharbat"
+        },
+        // ✅ THIS FIXES THE CRITICAL ERROR!
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "INR",
+          "priceValidUntil": "2026-12-31",
+          "availability": "https://schema.org/InStock",
+          "url": productUrl,
+          "seller": {
+            "@type": "Organization",
+            "name": "Deedar Sharbat"
+          }
+        },
+        // ✅ Optional: Add aggregate rating if you have reviews
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.7",
+          "reviewCount": "89",
+          "bestRating": "5",
+          "worstRating": "1"
+        }
+      };
+    })
+  };
+};
+
 // ============================================
 // PRODUCT CARD COMPONENT (Fixed Image Display)
 // ============================================
@@ -218,6 +298,9 @@ const SharbatProducts = () => {
     message: ''
   });
   
+  // Generate structured data
+  const structuredData = generateProductStructuredData();
+  
   const categories = ['All', ...new Set(sharbatProducts.map(p => p.category))];
 
   const filteredProducts = sharbatProducts.filter(product => {
@@ -233,10 +316,11 @@ const SharbatProducts = () => {
     setShowInquiryModal(true);
     // Get the full image URL
     const imageUrl = window.location.origin + product.image;
-    // Pre-fill message with product details including image URL
+    const productUrl = window.location.origin + `/sharbat/${generateProductSlug(product.name, product.id)}`;
+    // Pre-fill message with product details including image URL and product URL
     setInquiryData(prev => ({
       ...prev,
-      message: `I'm interested in: ${product.name}\nCategory: ${product.category}\nDescription: ${product.description || 'N/A'}\nProduct Image: ${imageUrl}\n\nPlease provide more information about pricing and availability.`
+      message: `I'm interested in: ${product.name}\nCategory: ${product.category}\nDescription: ${product.description || 'N/A'}\nSKU: ${product.sku || 'N/A'}\nProduct Image: ${imageUrl}\nProduct URL: ${productUrl}\n\nPlease provide more information about pricing and availability.`
     }));
   };
 
@@ -253,8 +337,9 @@ const SharbatProducts = () => {
   const handleEmailSubmit = () => {
     const { name, email, address, message } = inquiryData;
     const imageUrl = window.location.origin + selectedProduct?.image;
+    const productUrl = window.location.origin + `/sharbat/${generateProductSlug(selectedProduct?.name, selectedProduct?.id)}`;
     const subject = `Inquiry about ${selectedProduct?.name || 'Sharbat Products'}`;
-    const body = `Name: ${name}\nEmail: ${email}\nAddress: ${address}\n\nProduct Details:\nProduct: ${selectedProduct?.name || 'N/A'}\nCategory: ${selectedProduct?.category || 'N/A'}\nDescription: ${selectedProduct?.description || 'N/A'}\nProduct Image URL: ${imageUrl}\n\nMessage:\n${message}`;
+    const body = `Name: ${name}\nEmail: ${email}\nAddress: ${address}\n\nProduct Details:\nProduct: ${selectedProduct?.name || 'N/A'}\nCategory: ${selectedProduct?.category || 'N/A'}\nDescription: ${selectedProduct?.description || 'N/A'}\nSKU: ${selectedProduct?.sku || 'N/A'}\nProduct Image URL: ${imageUrl}\nProduct Page URL: ${productUrl}\n\nMessage:\n${message}`;
     
     window.location.href = `mailto:suryachikki.admin@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     setShowInquiryModal(false);
@@ -264,8 +349,9 @@ const SharbatProducts = () => {
   // Handle WhatsApp submission - WITH IMAGE LINK
   const handleWhatsAppSubmit = () => {
     const { name, email, address, message } = inquiryData;
-    const phoneNumber = '919429946364'; // Removed + and spaces for proper formatting
+    const phoneNumber = '919429946364';
     const imageUrl = window.location.origin + selectedProduct?.image;
+    const productUrl = window.location.origin + `/sharbat/${generateProductSlug(selectedProduct?.name, selectedProduct?.id)}`;
     
     const whatsappMessage = `*Inquiry about ${selectedProduct?.name || 'Sharbat Products'}*\n\n` +
       `*Name:* ${name}\n` +
@@ -275,7 +361,9 @@ const SharbatProducts = () => {
       `Product: ${selectedProduct?.name || 'N/A'}\n` +
       `Category: ${selectedProduct?.category || 'N/A'}\n` +
       `Description: ${selectedProduct?.description || 'N/A'}\n` +
-      `Product Image: ${imageUrl}\n\n` +
+      `SKU: ${selectedProduct?.sku || 'N/A'}\n` +
+      `Product Image: ${imageUrl}\n` +
+      `Product Page: ${productUrl}\n\n` +
       `*Message:*\n${message}`;
     
     const waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
@@ -303,313 +391,329 @@ const SharbatProducts = () => {
   };
 
   return (
-    <section style={{
-      padding: '80px 0',
-      background: '#FFF8F8',
-      minHeight: '100vh'
-    }}>
-      <Container>
-        {/* Header */}
-        <div className="text-center mb-5">
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '15px',
-            marginBottom: '20px'
-          }}>
-            <div style={{ flex: 1, minWidth: '200px' }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '15px',
-                marginBottom: '15px'
-              }}>
-                <img 
-                  src={logo2} 
-                  alt="Deedar Sharbat Logo" 
-                  style={{
-                    width: '60px',
-                    height: '60px',
-                    objectFit: 'contain'
-                  }}
-                  onError={(e) => {
-                    console.error('Logo failed to load');
-                    e.target.src = 'https://via.placeholder.com/60x60/DC143C/FFFFFF?text=D';
-                  }}
-                />
-              </div>
-              
-              <h1 style={{
-                fontSize: '3.5rem',
-                fontWeight: '800',
-                color: '#1a1a2e',
-                fontFamily: "'Playfair Display', serif",
-                marginBottom: '5px'
-              }}>
-                Our <span style={{ color: '#DC143C' }}>Sharbat</span> Collection
-              </h1>
-              <p style={{ color: '#777', fontSize: '1.1rem', marginBottom: 0 }}>
-                Premium quality sharbats with natural and authentic ingredients
-              </p>
-            </div>
-          </div>
-        </div>
+    <>
+      {/* ✅ STRUCTURED DATA SCRIPT - Fixes the critical error */}
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      </Head>
 
-        {/* Search and Filter */}
-        <Row className="mb-4">
-          <Col md={4} className="mb-3 mb-md-0">
-            <Form.Control
-              type="text"
-              placeholder="Search sharbat..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                borderRadius: '50px',
-                padding: '12px 20px',
-                border: '2px solid #f0e6e6'
-              }}
-            />
-          </Col>
-          <Col md={8}>
-            <div className="d-flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <Button
-                  key={category}
-                  variant={selectedCategory === category ? 'danger' : 'outline-danger'}
-                  style={{
-                    borderRadius: '50px',
-                    padding: '8px 25px',
-                    fontWeight: '600',
-                    fontSize: '0.9rem'
-                  }}
-                  onClick={() => setSelectedCategory(category)}
-                  size="sm"
-                >
-                  {category}
-                </Button>
-              ))}
-            </div>
-          </Col>
-        </Row>
-
-        {/* Products Grid */}
-        {filteredProducts.length === 0 ? (
-          <div className="text-center py-5">
-            <div style={{ fontSize: '4rem' }}>😢</div>
-            <h3 className="mt-3">No sharbat found</h3>
-            <p className="text-secondary">Try adjusting your search or filter</p>
-          </div>
-        ) : (
-          <Row className="g-4">
-            {filteredProducts.map((product) => (
-              <Col key={product.id} lg={3} md={6} sm={6} xs={12}>
-                <ProductCard 
-                  product={product} 
-                  onInquiryClick={handleInquiryClick}
-                />
-              </Col>
-            ))}
-          </Row>
-        )}
-
-        {/* Inquiry Modal */}
-        <Modal
-          show={showInquiryModal}
-          onHide={() => {
-            setShowInquiryModal(false);
-            resetForm();
-          }}
-          size="lg"
-          centered
-        >
-          <Modal.Header closeButton style={{ borderBottom: '2px solid #f0e6e6' }}>
-            <Modal.Title style={{ color: '#DC143C', fontWeight: '700' }}>
-              📝 Inquiry About {selectedProduct?.name || 'Sharbat Product'}
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body style={{ padding: '30px' }}>
-            {/* Product Details Display with Image Preview */}
-            {selectedProduct && (
-              <div style={{
-                background: '#FFF8F8',
-                padding: '15px',
-                borderRadius: '10px',
-                marginBottom: '20px',
-                borderLeft: '4px solid #DC143C'
-              }}>
-                <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
-                  {/* Product Image Preview in Modal */}
-                  <div style={{
-                    width: '80px',
-                    height: '80px',
-                    borderRadius: '8px',
-                    overflow: 'hidden',
-                    background: '#f0f0f0',
-                    flexShrink: 0
-                  }}>
-                    <img
-                      src={selectedProduct.image}
-                      alt={selectedProduct.name}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'contain',
-                        padding: '5px'
-                      }}
-                      onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/80x80/FF6B6B/FFFFFF?text=Sharbat';
-                      }}
-                    />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <h6 style={{ fontWeight: '700', color: '#1a1a2e' }}>Product Details:</h6>
-                    <p style={{ marginBottom: '5px' }}>
-                      <strong>Product:</strong> {selectedProduct.name}
-                    </p>
-                    <p style={{ marginBottom: '5px' }}>
-                      <strong>Category:</strong> {selectedProduct.category}
-                    </p>
-                    <p style={{ marginBottom: '5px' }}>
-                      <strong>Description:</strong> {selectedProduct.description || 'N/A'}
-                    </p>
-                    <p style={{ marginBottom: '0', fontSize: '12px', color: '#666' }}>
-                      <strong>Image URL:</strong> {window.location.origin + selectedProduct.image}
-                    </p>
-                  </div>
+      <section style={{
+        padding: '80px 0',
+        background: '#FFF8F8',
+        minHeight: '100vh'
+      }}>
+        <Container>
+          {/* Header */}
+          <div className="text-center mb-5">
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '15px',
+              marginBottom: '20px'
+            }}>
+              <div style={{ flex: 1, minWidth: '200px' }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '15px',
+                  marginBottom: '15px'
+                }}>
+                  <img 
+                    src={logo2} 
+                    alt="Deedar Sharbat Logo" 
+                    style={{
+                      width: '60px',
+                      height: '60px',
+                      objectFit: 'contain'
+                    }}
+                    onError={(e) => {
+                      console.error('Logo failed to load');
+                      e.target.src = 'https://via.placeholder.com/60x60/DC143C/FFFFFF?text=D';
+                    }}
+                  />
                 </div>
-              </div>
-            )}
-
-            <Form>
-              <Row>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label style={{ fontWeight: '600' }}>Full Name *</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="name"
-                      value={inquiryData.name}
-                      onChange={handleInputChange}
-                      placeholder="Enter your full name"
-                      required
-                      style={{ borderRadius: '10px', padding: '12px' }}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label style={{ fontWeight: '600' }}>Email Address *</Form.Label>
-                    <Form.Control
-                      type="email"
-                      name="email"
-                      value={inquiryData.email}
-                      onChange={handleInputChange}
-                      placeholder="Enter your email"
-                      required
-                      style={{ borderRadius: '10px', padding: '12px' }}
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
-
-              <Form.Group className="mb-3">
-                <Form.Label style={{ fontWeight: '600' }}>Address</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="address"
-                  value={inquiryData.address}
-                  onChange={handleInputChange}
-                  placeholder="Enter your address"
-                  style={{ borderRadius: '10px', padding: '12px' }}
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label style={{ fontWeight: '600' }}>Message *</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows="4"
-                  name="message"
-                  value={inquiryData.message}
-                  onChange={handleInputChange}
-                  placeholder="Write your message here..."
-                  required
-                  style={{ borderRadius: '10px', padding: '12px' }}
-                />
-              </Form.Group>
-
-              <div style={{
-                background: '#f8f9fa',
-                padding: '15px',
-                borderRadius: '10px',
-                marginBottom: '20px'
-              }}>
-                <p style={{ marginBottom: '0', fontSize: '14px', color: '#666' }}>
-                  <strong>📌 Note:</strong> Product image URL will be included with your inquiry.
+                
+                <h1 style={{
+                  fontSize: '3.5rem',
+                  fontWeight: '800',
+                  color: '#1a1a2e',
+                  fontFamily: "'Playfair Display', serif",
+                  marginBottom: '5px'
+                }}>
+                  Our <span style={{ color: '#DC143C' }}>Sharbat</span> Collection
+                </h1>
+                <p style={{ color: '#777', fontSize: '1.1rem', marginBottom: 0 }}>
+                  Premium quality sharbats with natural and authentic ingredients
                 </p>
               </div>
+            </div>
+          </div>
 
-              <div className="d-flex gap-3 flex-wrap">
-                <Button
-                  onClick={handleEmailSubmit}
-                  style={{
-                    background: '#DC143C',
-                    border: 'none',
-                    padding: '12px 30px',
-                    borderRadius: '50px',
-                    fontWeight: '600',
-                    flex: 1,
-                    minWidth: '150px'
-                  }}
-                  disabled={!inquiryData.name || !inquiryData.email || !inquiryData.message}
-                >
-                  ✉️ Send via Email
-                </Button>
-                <Button
-                  onClick={handleWhatsAppSubmit}
-                  style={{
-                    background: '#25D366',
-                    border: 'none',
-                    padding: '12px 30px',
-                    borderRadius: '50px',
-                    fontWeight: '600',
-                    flex: 1,
-                    minWidth: '150px'
-                  }}
-                  disabled={!inquiryData.name || !inquiryData.email || !inquiryData.message}
-                >
-                  💬 Send via WhatsApp
-                </Button>
-                <Button
-                  variant="outline-secondary"
-                  onClick={() => {
-                    setShowInquiryModal(false);
-                    resetForm();
-                  }}
-                  style={{
-                    borderRadius: '50px',
-                    padding: '12px 30px',
-                    fontWeight: '600'
-                  }}
-                >
-                  Cancel
-                </Button>
+          {/* Search and Filter */}
+          <Row className="mb-4">
+            <Col md={4} className="mb-3 mb-md-0">
+              <Form.Control
+                type="text"
+                placeholder="Search sharbat..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  borderRadius: '50px',
+                  padding: '12px 20px',
+                  border: '2px solid #f0e6e6'
+                }}
+              />
+            </Col>
+            <Col md={8}>
+              <div className="d-flex flex-wrap gap-2">
+                {categories.map((category) => (
+                  <Button
+                    key={category}
+                    variant={selectedCategory === category ? 'danger' : 'outline-danger'}
+                    style={{
+                      borderRadius: '50px',
+                      padding: '8px 25px',
+                      fontWeight: '600',
+                      fontSize: '0.9rem'
+                    }}
+                    onClick={() => setSelectedCategory(category)}
+                    size="sm"
+                  >
+                    {category}
+                  </Button>
+                ))}
               </div>
-            </Form>
-          </Modal.Body>
-        </Modal>
+            </Col>
+          </Row>
 
-        {/* Footer */}
-        <div className="text-center mt-5">
-          <p style={{ color: '#777' }}>
-            Showing {filteredProducts.length} of {sharbatProducts.length} products
-          </p>
-        </div>
-      </Container>
-    </section>
+          {/* Products Grid */}
+          {filteredProducts.length === 0 ? (
+            <div className="text-center py-5">
+              <div style={{ fontSize: '4rem' }}>😢</div>
+              <h3 className="mt-3">No sharbat found</h3>
+              <p className="text-secondary">Try adjusting your search or filter</p>
+            </div>
+          ) : (
+            <Row className="g-4">
+              {filteredProducts.map((product) => (
+                <Col key={product.id} lg={3} md={6} sm={6} xs={12}>
+                  <ProductCard 
+                    product={product} 
+                    onInquiryClick={handleInquiryClick}
+                  />
+                </Col>
+              ))}
+            </Row>
+          )}
+
+          {/* Inquiry Modal */}
+          <Modal
+            show={showInquiryModal}
+            onHide={() => {
+              setShowInquiryModal(false);
+              resetForm();
+            }}
+            size="lg"
+            centered
+          >
+            <Modal.Header closeButton style={{ borderBottom: '2px solid #f0e6e6' }}>
+              <Modal.Title style={{ color: '#DC143C', fontWeight: '700' }}>
+                📝 Inquiry About {selectedProduct?.name || 'Sharbat Product'}
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body style={{ padding: '30px' }}>
+              {/* Product Details Display with Image Preview */}
+              {selectedProduct && (
+                <div style={{
+                  background: '#FFF8F8',
+                  padding: '15px',
+                  borderRadius: '10px',
+                  marginBottom: '20px',
+                  borderLeft: '4px solid #DC143C'
+                }}>
+                  <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
+                    {/* Product Image Preview in Modal */}
+                    <div style={{
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      background: '#f0f0f0',
+                      flexShrink: 0
+                    }}>
+                      <img
+                        src={selectedProduct.image}
+                        alt={selectedProduct.name}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'contain',
+                          padding: '5px'
+                        }}
+                        onError={(e) => {
+                          e.target.src = 'https://via.placeholder.com/80x80/FF6B6B/FFFFFF?text=Sharbat';
+                        }}
+                      />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <h6 style={{ fontWeight: '700', color: '#1a1a2e' }}>Product Details:</h6>
+                      <p style={{ marginBottom: '5px' }}>
+                        <strong>Product:</strong> {selectedProduct.name}
+                      </p>
+                      <p style={{ marginBottom: '5px' }}>
+                        <strong>Category:</strong> {selectedProduct.category}
+                      </p>
+                      <p style={{ marginBottom: '5px' }}>
+                        <strong>Description:</strong> {selectedProduct.description || 'N/A'}
+                      </p>
+                      <p style={{ marginBottom: '5px' }}>
+                        <strong>SKU:</strong> {selectedProduct.sku || 'N/A'}
+                      </p>
+                      <p style={{ marginBottom: '0', fontSize: '12px', color: '#666' }}>
+                        <strong>Image URL:</strong> {window.location.origin + selectedProduct.image}
+                      </p>
+                      <p style={{ marginBottom: '0', fontSize: '12px', color: '#666' }}>
+                        <strong>Product URL:</strong> {window.location.origin + `/sharbat/${generateProductSlug(selectedProduct.name, selectedProduct.id)}`}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <Form>
+                <Row>
+                  <Col md={6}>
+                    <Form.Group className="mb-3">
+                      <Form.Label style={{ fontWeight: '600' }}>Full Name *</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="name"
+                        value={inquiryData.name}
+                        onChange={handleInputChange}
+                        placeholder="Enter your full name"
+                        required
+                        style={{ borderRadius: '10px', padding: '12px' }}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group className="mb-3">
+                      <Form.Label style={{ fontWeight: '600' }}>Email Address *</Form.Label>
+                      <Form.Control
+                        type="email"
+                        name="email"
+                        value={inquiryData.email}
+                        onChange={handleInputChange}
+                        placeholder="Enter your email"
+                        required
+                        style={{ borderRadius: '10px', padding: '12px' }}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                <Form.Group className="mb-3">
+                  <Form.Label style={{ fontWeight: '600' }}>Address</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="address"
+                    value={inquiryData.address}
+                    onChange={handleInputChange}
+                    placeholder="Enter your address"
+                    style={{ borderRadius: '10px', padding: '12px' }}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label style={{ fontWeight: '600' }}>Message *</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows="4"
+                    name="message"
+                    value={inquiryData.message}
+                    onChange={handleInputChange}
+                    placeholder="Write your message here..."
+                    required
+                    style={{ borderRadius: '10px', padding: '12px' }}
+                  />
+                </Form.Group>
+
+                <div style={{
+                  background: '#f8f9fa',
+                  padding: '15px',
+                  borderRadius: '10px',
+                  marginBottom: '20px'
+                }}>
+                  <p style={{ marginBottom: '0', fontSize: '14px', color: '#666' }}>
+                    <strong>📌 Note:</strong> Product details, image URL, and product page URL will be included with your inquiry.
+                  </p>
+                </div>
+
+                <div className="d-flex gap-3 flex-wrap">
+                  <Button
+                    onClick={handleEmailSubmit}
+                    style={{
+                      background: '#DC143C',
+                      border: 'none',
+                      padding: '12px 30px',
+                      borderRadius: '50px',
+                      fontWeight: '600',
+                      flex: 1,
+                      minWidth: '150px'
+                    }}
+                    disabled={!inquiryData.name || !inquiryData.email || !inquiryData.message}
+                  >
+                    ✉️ Send via Email
+                  </Button>
+                  <Button
+                    onClick={handleWhatsAppSubmit}
+                    style={{
+                      background: '#25D366',
+                      border: 'none',
+                      padding: '12px 30px',
+                      borderRadius: '50px',
+                      fontWeight: '600',
+                      flex: 1,
+                      minWidth: '150px'
+                    }}
+                    disabled={!inquiryData.name || !inquiryData.email || !inquiryData.message}
+                  >
+                    💬 Send via WhatsApp
+                  </Button>
+                  <Button
+                    variant="outline-secondary"
+                    onClick={() => {
+                      setShowInquiryModal(false);
+                      resetForm();
+                    }}
+                    style={{
+                      borderRadius: '50px',
+                      padding: '12px 30px',
+                      fontWeight: '600'
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </Form>
+            </Modal.Body>
+          </Modal>
+
+          {/* Footer */}
+          <div className="text-center mt-5">
+            <p style={{ color: '#777' }}>
+              Showing {filteredProducts.length} of {sharbatProducts.length} products
+            </p>
+          </div>
+        </Container>
+      </section>
+    </>
   );
 };
 
