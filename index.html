@@ -41,7 +41,8 @@
     <meta name="twitter:creator" content="@suryachikki" />
     
     <!-- ===== ADDITIONAL META TAGS ===== -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- FIXED: Replaced deprecated apple-mobile-web-app-capable with mobile-web-app-capable -->
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="format-detection" content="telephone=yes" />
     <meta name="geo.region" content="IN" />
@@ -309,8 +310,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     
-    <!-- ===== PRELOAD LOGO ===== -->
-    <link rel="preload" as="image" href="/icons/logo512.png" />
+    <!-- ===== PRELOAD LOGO - FIXED: removed as it was causing warning ===== -->
+    <!-- The logo will be loaded when needed by the app -->
   </head>
   <body>
     <div id="root"></div>
