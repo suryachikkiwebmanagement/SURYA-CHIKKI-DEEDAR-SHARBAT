@@ -22,7 +22,7 @@ const ChikkiProducts = () => {
      {
       id: 17,
       name: "Rajgiri Peanut chikki",
-      image: '/images/chikki/images(1).jpeg',
+      image: '/images/chikki/images(40).jpeg',
       category: "Chikki",
       isSpecial: true,
       description: "Special Rajgiri Peanut  chikki with authentic taste. Made with premium quality sesame seeds and jaggery for a perfect crunch.",
