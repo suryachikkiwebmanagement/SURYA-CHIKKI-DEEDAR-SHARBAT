@@ -19,6 +19,16 @@ const ChikkiProducts = () => {
       sku: "CHK-001",
       price: "120.00"
     },
+     {
+      id: 17,
+      name: "Rajgiri Peanut chikki",
+      image: '/images/chikki/images(1).jpeg',
+      category: "Chikki",
+      isSpecial: true,
+      description: "Special Rajgiri Peanut  chikki with authentic taste. Made with premium quality sesame seeds and jaggery for a perfect crunch.",
+      sku: "CHK-001",
+      price: "120.00"
+    },
     {
       id: 2,
       name: "Peanut Dry Fruit Chikki",

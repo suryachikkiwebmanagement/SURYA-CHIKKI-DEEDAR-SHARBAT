@@ -37,7 +37,7 @@ const Footer = () => {
               <a href="https://facebook.com/suryachikki" target="_blank" rel="noopener noreferrer" style={{ color: '#DC143C' }}>
                 <FaFacebook />
               </a>
-              <a href="https://instagram.com/suryachikki" target="_blank" rel="noopener noreferrer" style={{ color: '#DC143C' }}>
+              <a href="https://www.instagram.com/suryachikki.official?igsh=MWV0aW1jbHBjMTR2YQ%3D%3D" target="_blank" rel="noopener noreferrer" style={{ color: '#DC143C' }}>
                 <FaInstagram />
               </a>
               <a href="https://wa.me/919429946364" target="_blank" rel="noopener noreferrer" style={{ color: '#25D366' }}>
