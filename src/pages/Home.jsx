@@ -7,11 +7,13 @@ import mobileBanner2 from '../assets/images/banner(2).png';
 import mobileBanner3 from '../assets/images/banner(3).png';
 import mobileBanner4 from '../assets/images/banner(4).png';
 import mobileBanner5 from '../assets/images/banner(5).png';
+import mobileBanner6 from '../assets/images/banner(6).png';
 import pcBanner1 from '../assets/images/pcbanners  (1).png';
 import pcBanner2 from '../assets/images/pcbanners  (2).png';
 import pcBanner3 from '../assets/images/pcbanners  (3).png';
 import pcBanner4 from '../assets/images/pcbanners  (4).png';
 import pcBanner5 from '../assets/images/pcbanners  (3).png';
+import pcBanner6 from '../assets/images/pcbanners  (5).png';
 import followUsImg from '../assets/images/followusimg.png';
 
 // Import Traditional Chikki images (JPEG)
@@ -19,11 +21,6 @@ import tcimages1 from '../assets/images/tcimages (1).png';
 import tcimages2 from '../assets/images/tcimages (2).png';
 import tcimages3 from '../assets/images/tcimages (3).png';
 
-
-// Import Refreshing Sharbat images (PNG)
-import rsimage1 from '../assets/images/rsimages (1).png';
-import rsimage2 from '../assets/images/rsimages (2).png';
-import rsimage3 from '../assets/images/rsimages (3).png';
 // Import only fromourfeed images (1) to (7)
 import feedImg1 from '../assets/images/fromourfeed (1).jpeg';
 import feedImg2 from '../assets/images/fromourfeed (2).jpeg';
@@ -38,7 +35,8 @@ const Home = () => {
     { id: 1, mobile: mobileBanner1, pc: pcBanner1 },
   
     { id: 4, mobile: mobileBanner4, pc: pcBanner4 },
-    { id: 5, mobile: mobileBanner5, pc: pcBanner5 }
+    { id: 5, mobile: mobileBanner5, pc: pcBanner5 },
+    { id: 6, mobile: mobileBanner6, pc: pcBanner6 }
   ];
 
   // Traditional Chikki slideshow data - Titles removed, only images remain
@@ -47,13 +45,6 @@ const Home = () => {
     { id: 2, image: tcimages2 },
     { id: 3, image: tcimages3 },
  
-  ];
-
-  // Refreshing Sharbat slideshow data - Titles removed, only images remain
-  const sharbatSlides = [
-    { id: 1, image: rsimage1 },
-    { id: 2, image: rsimage2 },
-    { id: 3, image: rsimage3 }
   ];
 
   // All product images
@@ -83,9 +74,7 @@ const Home = () => {
 
   // Slideshow state
   const [chikkiCurrentIndex, setChikkiCurrentIndex] = useState(0);
-  const [sharbatCurrentIndex, setSharbatCurrentIndex] = useState(0);
   const [isChikkiAnimating, setIsChikkiAnimating] = useState(false);
-  const [isSharbatAnimating, setIsSharbatAnimating] = useState(false);
 
   // Auto-play for Chikki slideshow
   useEffect(() => {
@@ -98,18 +87,6 @@ const Home = () => {
     }, 2000);
     return () => clearInterval(interval);
   }, [isChikkiAnimating]);
-
-  // Auto-play for Sharbat slideshow
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!isSharbatAnimating) {
-        setSharbatCurrentIndex((prevIndex) => 
-          prevIndex === sharbatSlides.length - 1 ? 0 : prevIndex + 1
-        );
-      }
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [isSharbatAnimating]);
 
   // Navigation functions for Chikki
   const goToPreviousChikki = () => {
@@ -132,41 +109,12 @@ const Home = () => {
     }
   };
 
-  // Navigation functions for Sharbat
-  const goToPreviousSharbat = () => {
-    if (!isSharbatAnimating) {
-      setIsSharbatAnimating(true);
-      setSharbatCurrentIndex((prevIndex) =>
-        prevIndex === 0 ? sharbatSlides.length - 1 : prevIndex - 1
-      );
-      setTimeout(() => setIsSharbatAnimating(false), 800);
-    }
-  };
-
-  const goToNextSharbat = () => {
-    if (!isSharbatAnimating) {
-      setIsSharbatAnimating(true);
-      setSharbatCurrentIndex((prevIndex) =>
-        prevIndex === sharbatSlides.length - 1 ? 0 : prevIndex + 1
-      );
-      setTimeout(() => setIsSharbatAnimating(false), 800);
-    }
-  };
-
   // Go to specific slide
   const goToChikkiSlide = (index) => {
     if (!isChikkiAnimating && index !== chikkiCurrentIndex) {
       setIsChikkiAnimating(true);
       setChikkiCurrentIndex(index);
       setTimeout(() => setIsChikkiAnimating(false), 800);
-    }
-  };
-
-  const goToSharbatSlide = (index) => {
-    if (!isSharbatAnimating && index !== sharbatCurrentIndex) {
-      setIsSharbatAnimating(true);
-      setSharbatCurrentIndex(index);
-      setTimeout(() => setIsSharbatAnimating(false), 800);
     }
   };
 
@@ -453,13 +401,15 @@ const Home = () => {
     <>
 
       {/* ===== 1. FULL SCREEN BANNER CAROUSEL ===== */}
-      <section style={{
-        position: 'relative',
-        height: '100vh',
-        width: '100%',
-        overflow: 'hidden',
-        paddingTop: '0px'
-      }}>
+      <section
+        className="banner-section"
+        style={{
+          position: 'relative',
+          width: '100%',
+          overflow: 'hidden',
+          paddingTop: '0px'
+        }}
+      >
         <Carousel 
           fade 
           controls={true} 
@@ -469,28 +419,16 @@ const Home = () => {
           style={{ height: '100%' }}
         >
           {banners.map((banner, index) => (
-            <Carousel.Item key={index} style={{ height: '100vh', position: 'relative' }}>
+            <Carousel.Item key={index} className="banner-item" style={{ position: 'relative' }}>
               <img
                 src={banner.mobile}
                 alt={'Mobile Banner ' + (index + 1)}
-                className="d-block d-lg-none"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  objectPosition: 'center'
-                }}
+                className="d-block d-lg-none banner-mobile"
               />
               <img
                 src={banner.pc}
                 alt={'PC Banner ' + (index + 1)}
-                className="d-none d-lg-block"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  objectPosition: 'center'
-                }}
+                className="d-none d-lg-block banner-pc"
               />
               
               <div style={{
@@ -655,48 +593,6 @@ const Home = () => {
             linkTo="/chikki"
             buttonText="Explore Chikkis"
           /> </div>
-        </Container>
-      </section>
-
-      {/* ===== 4. REFRESHING SHARBAT - PREMIUM SLIDESHOW (No Titles) ===== */}
-      <section style={{
-        padding: '70px 0',
-        background: '#FFFFFF',
-        position: 'relative'
-      }}>
-        {/* Animated Background Element */}
-        <div style={{
-          position: 'absolute',
-          bottom: '10%',
-          left: '5%',
-          width: '250px',
-          height: '250px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(220,20,60,0.03) 0%, transparent 70%)',
-          animation: 'float 8s ease-in-out infinite reverse'
-        }}></div>
-
-        <Container>
-          <div className="text-center mb-5">
-            <h2 style={{
-              fontSize: '2.5rem',
-              fontWeight: '800',
-              color: '#1a1a2e',
-              fontFamily: "'Playfair Display', serif"
-            }}>
-              Refreshing <span style={{ color: '#DC143C' }}>Sharbat</span>
-            </h2>
-       
-
-          <SlideshowRenderer
-            slides={sharbatSlides}
-            currentIndex={sharbatCurrentIndex}
-            goToPrevious={goToPreviousSharbat}
-            goToNext={goToNextSharbat}
-            goToSlide={goToSharbatSlide}
-            linkTo="/sharbat"
-            buttonText="Explore Sharbats"
-          />   </div>
         </Container>
       </section>
 
@@ -1546,6 +1442,71 @@ const Home = () => {
           }
           .d-lg-block {
             display: block !important;
+          }
+        }
+
+        /* ============================================
+           BANNER RESPONSIVE FIX
+           ============================================ */
+        .banner-section {
+          height: 100vh;
+        }
+
+        .banner-item {
+          height: 100vh;
+          position: relative;
+        }
+
+        .banner-mobile,
+        .banner-pc {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          display: block;
+        }
+
+        /* Force the Carousel inner to take the full banner height */
+        .banner-section .carousel,
+        .banner-section .carousel-inner,
+        .banner-section .carousel-item {
+          height: 100%;
+        }
+
+        /* MOBILE: use the image's natural aspect ratio so nothing is cropped */
+        @media (max-width: 991px) {
+          .banner-section {
+            height: auto;
+            min-height: 100svh;      /* small viewport height — best for mobile */
+            min-height: 100dvh;      /* dynamic viewport height — modern fallback */
+          }
+
+          .banner-section .carousel,
+          .banner-section .carousel-inner {
+            height: auto;
+          }
+
+          .banner-item {
+            height: auto;
+            /* Match this ratio to your mobile banner image's real dimensions.
+               Common values:  9 / 16 (portrait), 4 / 5, 3 / 4, 1 / 1.
+               Change this ONE line if your mobile banner has a different ratio. */
+            aspect-ratio: 9 / 16;
+            max-height: 100dvh;
+          }
+
+          .banner-mobile {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+          }
+        }
+
+        /* Small phones — tighten the overlay text a bit */
+        @media (max-width: 576px) {
+          .banner-item {
+            aspect-ratio: 9 / 16;  /* keep in sync with the rule above */
           }
         }
 
