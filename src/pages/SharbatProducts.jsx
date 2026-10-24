@@ -1,356 +1,308 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { Container, Row, Col, Form, Button, Badge, Modal } from 'react-bootstrap';
 
-// Simple Head component for meta tags (replaces next/head)
-const Head = ({ children }) => {
-  return <>{children}</>;
-};
+// ─── Static data hoisted ───
+const SHARBAT_PRODUCTS = [
+  {
+    id: 1,
+    name: 'Orange Sharbat',
+    image: '/images/sharbat/images(18).jpeg',
+    category: 'Fruit Sharbat',
+    isSpecial: true,
+    description: 'Refreshing orange sharbat with natural flavors. Made from real oranges for a tangy and sweet taste.',
+    sku: 'SHR-001',
+    flavor: 'Orange',
+    price: '150.00'
+  },
+  {
+    id: 2,
+    name: 'Mango Sharbat',
+    image: '/images/sharbat/images(19).jpeg',
+    category: 'Fruit Sharbat',
+    isSpecial: true,
+    description: 'Authentic mango sharbat made from real mangoes. Rich, flavorful, and perfect for traditional summer drinks.',
+    sku: 'SHR-002',
+    flavor: 'Mango',
+    price: '160.00'
+  },
+  {
+    id: 3,
+    name: 'Varyali Sharbat',
+    image: '/images/sharbat/images(20).jpeg',
+    category: 'Traditional Sharbat',
+    isSpecial: false,
+    description: 'Traditional Varyali sharbat with unique taste. A classic Indian summer drink with cooling properties.',
+    sku: 'SHR-003',
+    flavor: 'Varyali',
+    price: '170.00'
+  },
+  {
+    id: 4,
+    name: 'Nimbu Sharbat',
+    image: '/images/sharbat/images(21).jpeg',
+    category: 'Fruit Sharbat',
+    isSpecial: false,
+    description: 'Tangy lemon sharbat perfect for summer. Made with fresh lemons and natural ingredients.',
+    sku: 'SHR-004',
+    flavor: 'Lemon',
+    price: '140.00'
+  },
+  {
+    id: 5,
+    name: 'Shabi Rose Sharbat',
+    image: '/images/sharbat/images(22).jpeg',
+    category: 'Flower Sharbat',
+    isSpecial: false,
+    description: 'Fragrant rose sharbat with a delightful aroma. Made from premium rose petals for a royal taste.',
+    sku: 'SHR-005',
+    flavor: 'Rose',
+    price: '155.00'
+  },
+  {
+    id: 6,
+    name: 'Special Deedar Sharbat',
+    image: '/images/sharbat/images(23).jpeg',
+    category: 'Traditional Sharbat',
+    isSpecial: false,
+    description: 'Cooling khus sharbat perfect for hot summers. Made with natural khus extract.',
+    sku: 'SHR-006',
+    flavor: 'Khus',
+    price: '165.00'
+  },
+  {
+    id: 7,
+    name: 'Pineapple Sharbat',
+    image: '/images/sharbat/images(24).jpeg',
+    category: 'Pine apple Sharbat',
+    isSpecial: false,
+    description: 'Sweet and tangy pineapple sharbat with natural pineapple flavor.',
+    sku: 'SHR-007',
+    flavor: 'Pineapple',
+    price: '145.00'
+  }
+];
+
+const CATEGORIES = ['All', ...new Set(SHARBAT_PRODUCTS.map(p => p.category))];
+
+const FALLBACK_IMG =
+  'data:image/svg+xml;charset=UTF-8,' +
+  encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+      <rect fill="#FFF8E1" width="300" height="300"/>
+      <text x="150" y="150" font-family="Arial,sans-serif" font-size="18"
+            fill="#C99400" text-anchor="middle" dominant-baseline="middle">
+        Surya Sharbat
+      </text>
+    </svg>`
+  );
+
+const slugify = (name, id) =>
+  `${id}-${String(name)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')}`;
+
+const origin = () => (typeof window !== 'undefined' ? window.location.origin : '');
 
 const SharbatProducts = () => {
-  // Sharbat product data with images from public folder
-  const sharbatProducts = [
-    {
-      id: 1,
-      name: "Orange Sharbat",
-      image: '/images/sharbat/images(18).jpeg',
-      category: "Fruit Sharbat",
-      isSpecial: true,
-      description: "Refreshing orange sharbat with natural flavors. Made from real oranges for a tangy and sweet taste.",
-      sku: "SHR-001",
-      flavor: "Orange",
-      price: "150.00"
-    },
-    {
-      id: 2,
-      name: "Mango Sharbat",
-      image: '/images/sharbat/images(19).jpeg',
-      category: "Fruit Sharbat",
-      isSpecial: true,
-      description: "Authentic mango sharbat made from real mangoes. Rich, flavorful, and perfect for traditional summer drinks.",
-      sku: "SHR-002",
-      flavor: "Mango",
-      price: "160.00"
-    },
-    {
-      id: 3,
-      name: "Varyali Sharbat",
-      image: '/images/sharbat/images(20).jpeg',
-      category: "Traditional Sharbat",
-      isSpecial: false,
-      description: "Traditional Varyali sharbat with unique taste. A classic Indian summer drink with cooling properties.",
-      sku: "SHR-003",
-      flavor: "Varyali",
-      price: "170.00"
-    },
-    {
-      id: 4,
-      name: "Nimbu Sharbat",
-      image: '/images/sharbat/images(21).jpeg',
-      category: "Fruit Sharbat",
-      isSpecial: false,
-      description: "Tangy lemon sharbat perfect for summer. Made with fresh lemons and natural ingredients.",
-      sku: "SHR-004",
-      flavor: "Lemon",
-      price: "140.00"
-    },
-    {
-      id: 5,
-      name: "Shabi Rose Sharbat",
-      image: '/images/sharbat/images(22).jpeg',
-      category: "Flower Sharbat",
-      isSpecial: false,
-      description: "Fragrant rose sharbat with a delightful aroma. Made from premium rose petals for a royal taste.",
-      sku: "SHR-005",
-      flavor: "Rose",
-      price: "155.00"
-    },
-    {
-      id: 6,
-      name: "Special Deedar Sharbat",
-      image: '/images/sharbat/images(23).jpeg',
-      category: "Traditional Sharbat",
-      isSpecial: false,
-      description: "Cooling khus sharbat perfect for hot summers. Made with natural khus extract.",
-      sku: "SHR-006",
-      flavor: "Khus",
-      price: "165.00"
-    },
-    {
-      id: 7,
-      name: "Pineapple Sharbat",
-      image: '/images/sharbat/images(24).jpeg',
-      category: "Pine apple Sharbat",
-      isSpecial: false,
-      description: "Sweet and tangy pineapple sharbat with natural pineapple flavor.",
-      sku: "SHR-007",
-      flavor: "Pineapple",
-      price: "145.00"
-    },
-  ];
-
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [imageErrors, setImageErrors] = useState({});
   const [showInquiryModal, setShowInquiryModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [inquiryData, setInquiryData] = useState({
-    name: '',
-    email: '',
-    address: '',
-    message: ''
-  });
+  const [inquiryData, setInquiryData] = useState({ name: '', email: '', address: '', message: '' });
 
-  // Generate product slug
-  const generateProductSlug = (name, id) => {
-    const slug = name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
-    return `${id}-${slug}`;
-  };
-
-  // ✅ FIXED: Generate structured data with correct prices
-  const generateProductStructuredData = () => {
+  // Structured data — built once
+  const structuredData = useMemo(() => {
+    const base = origin();
     return {
-      "@context": "https://schema.org",
-      "@graph": sharbatProducts.map(product => {
-        const productSlug = generateProductSlug(product.name, product.id);
-        const productUrl = window.location.origin + `/sharbat-product/${productSlug}`;
-        const imageUrl = window.location.origin + product.image;
-        
+      '@context': 'https://schema.org',
+      '@graph': SHARBAT_PRODUCTS.map(product => {
+        const productUrl = `${base}/sharbat-product/${slugify(product.name, product.id)}`;
+        const imageUrl = `${base}${product.image}`;
         return {
-          "@type": "Product",
-          "name": product.name,
-          "description": product.description || "Refreshing sharbat",
-          "image": {
-            "@type": "ImageObject",
-            "url": imageUrl,
-            "width": "300",
-            "height": "300",
-            "caption": product.name
+          '@type': 'Product',
+          name: product.name,
+          description: product.description || 'Refreshing sharbat',
+          image: {
+            '@type': 'ImageObject',
+            url: imageUrl,
+            width: '300',
+            height: '300',
+            caption: product.name
           },
-          "category": product.category,
-          "url": productUrl,
-          "sku": product.sku || `SKU-${String(product.id).padStart(4, '0')}`,
-          "mpn": `MPN-${String(product.id).padStart(4, '0')}`,
-          "brand": {
-            "@type": "Brand",
-            "name": "Surya Chikki"
+          category: product.category,
+          url: productUrl,
+          sku: product.sku || `SKU-${String(product.id).padStart(4, '0')}`,
+          mpn: `MPN-${String(product.id).padStart(4, '0')}`,
+          brand: { '@type': 'Brand', name: 'Surya Chikki' },
+          manufacturer: { '@type': 'Organization', name: 'Surya Chikki' },
+          offers: {
+            '@type': 'Offer',
+            price: product.price || '0.00',
+            priceCurrency: 'INR',
+            priceValidUntil: '2026-12-31',
+            availability: 'https://schema.org/InStock',
+            url: productUrl,
+            seller: { '@type': 'Organization', name: 'Surya Chikki' }
           },
-          "manufacturer": {
-            "@type": "Organization",
-            "name": "Surya Chikki"
+          review: {
+            '@type': 'Review',
+            reviewRating: { '@type': 'Rating', ratingValue: '4.5', bestRating: '5' },
+            author: { '@type': 'Person', name: 'Surya Chikki Customer' }
           },
-          "offers": {
-            "@type": "Offer",
-            "price": product.price || "0.00", // ✅ FIXED: Using actual price
-            "priceCurrency": "INR",
-            "priceValidUntil": "2026-12-31",
-            "availability": "https://schema.org/InStock",
-            "url": productUrl,
-            "seller": {
-              "@type": "Organization",
-              "name": "Surya Chikki"
-            }
-          },
-          // ✅ FIXED: Added review field (optional but recommended)
-          "review": {
-            "@type": "Review",
-            "reviewRating": {
-              "@type": "Rating",
-              "ratingValue": "4.5",
-              "bestRating": "5"
-            },
-            "author": {
-              "@type": "Person",
-              "name": "Surya Chikki Customer"
-            }
-          },
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "reviewCount": "95",
-            "bestRating": "5",
-            "worstRating": "1"
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: '4.8',
+            reviewCount: '95',
+            bestRating: '5',
+            worstRating: '1'
           }
         };
       })
     };
-  };
+  }, []);
 
-  const structuredData = generateProductStructuredData();
-
-  // Get unique categories
-  const categories = ['All', ...new Set(sharbatProducts.map(p => p.category))];
-
-  const filteredProducts = sharbatProducts.filter(product => {
-    const matchCategory = selectedCategory === 'All' || product.category === selectedCategory;
-    const matchSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                       (product.description && product.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                       (product.flavor && product.flavor.toLowerCase().includes(searchTerm.toLowerCase()));
-    return matchCategory && matchSearch;
-  });
+  // Filtering memoized — searches name, description, AND flavor
+  const filteredProducts = useMemo(() => {
+    const q = searchTerm.toLowerCase().trim();
+    return SHARBAT_PRODUCTS.filter(p => {
+      const matchCat = selectedCategory === 'All' || p.category === selectedCategory;
+      const matchSearch =
+        !q ||
+        p.name.toLowerCase().includes(q) ||
+        (p.description || '').toLowerCase().includes(q) ||
+        (p.flavor || '').toLowerCase().includes(q);
+      return matchCat && matchSearch;
+    });
+  }, [searchTerm, selectedCategory]);
 
   const handleImageError = (productId, e) => {
-    console.error(`❌ Failed to load image for product ${productId}:`, e.target.src);
-    setImageErrors(prev => ({ ...prev, [productId]: true }));
-    e.target.src = 'https://via.placeholder.com/300x300/FF6B6B/FFFFFF?text=Surya+Sharbat';
+    e.target.src = FALLBACK_IMG;
     e.target.onerror = null;
-  };
-
-  // Handle inquiry button click
-  const handleInquiryClick = (product) => {
-    setSelectedProduct(product);
-    setShowInquiryModal(true);
-    const imageUrl = window.location.origin + product.image;
-    const productUrl = window.location.origin + `/sharbat-product/${generateProductSlug(product.name, product.id)}`;
-    setInquiryData(prev => ({
-      ...prev,
-      message: `I'm interested in: ${product.name}\nCategory: ${product.category}\nFlavor: ${product.flavor || 'N/A'}\nDescription: ${product.description || 'N/A'}\nSKU: ${product.sku || 'N/A'}\nPrice: ₹${product.price || 'Contact for price'}\nProduct Image: ${imageUrl}\nProduct URL: ${productUrl}\n\nPlease provide more information about pricing and availability.`
-    }));
+    setImageErrors(prev => (prev[productId] ? prev : { ...prev, [productId]: true }));
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setInquiryData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setInquiryData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleEmailSubmit = () => {
-    const { name, email, address, message } = inquiryData;
-    const imageUrl = window.location.origin + selectedProduct?.image;
-    const productUrl = window.location.origin + `/sharbat-product/${generateProductSlug(selectedProduct?.name, selectedProduct?.id)}`;
-    const subject = `Inquiry about ${selectedProduct?.name || 'Sharbat Products'}`;
-    const body = `Name: ${name}\nEmail: ${email}\nAddress: ${address}\n\nProduct Details:\nProduct: ${selectedProduct?.name || 'N/A'}\nCategory: ${selectedProduct?.category || 'N/A'}\nFlavor: ${selectedProduct?.flavor || 'N/A'}\nDescription: ${selectedProduct?.description || 'N/A'}\nSKU: ${selectedProduct?.sku || 'N/A'}\nPrice: ₹${selectedProduct?.price || 'Contact for price'}\nProduct Image URL: ${imageUrl}\nProduct Page URL: ${productUrl}\n\nMessage:\n${message}`;
-    
-    window.location.href = `mailto:suryachikki.admin@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setShowInquiryModal(false);
-    resetForm();
+  const buildUrls = (product) => {
+    const base = origin();
+    return {
+      imageUrl: `${base}${product.image}`,
+      productUrl: `${base}/sharbat-product/${slugify(product.name, product.id)}`
+    };
   };
 
-  const handleWhatsAppSubmit = () => {
-    const { name, email, address, message } = inquiryData;
-    const phoneNumber = '919429946364';
-    const imageUrl = window.location.origin + selectedProduct?.image;
-    const productUrl = window.location.origin + `/sharbat-product/${generateProductSlug(selectedProduct?.name, selectedProduct?.id)}`;
-    
-    const whatsappMessage = `*Inquiry about ${selectedProduct?.name || 'Sharbat Products'}*\n\n` +
-      `*Name:* ${name}\n` +
-      `*Email:* ${email}\n` +
-      `*Address:* ${address}\n\n` +
-      `*Product Details:*\n` +
-      `Product: ${selectedProduct?.name || 'N/A'}\n` +
-      `Category: ${selectedProduct?.category || 'N/A'}\n` +
-      `Flavor: ${selectedProduct?.flavor || 'N/A'}\n` +
-      `Description: ${selectedProduct?.description || 'N/A'}\n` +
-      `SKU: ${selectedProduct?.sku || 'N/A'}\n` +
-      `Price: ₹${selectedProduct?.price || 'Contact for price'}\n` +
-      `Product Image: ${imageUrl}\n` +
-      `Product Page: ${productUrl}\n\n` +
-      `*Message:*\n${message}`;
-    
-    const waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
-    
-    if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
-      window.location.href = waUrl;
-    } else {
-      window.open(waUrl, '_blank');
-    }
-    
-    setShowInquiryModal(false);
-    resetForm();
-  };
-
-  const resetForm = () => {
+  const handleInquiryClick = (product) => {
+    const { imageUrl, productUrl } = buildUrls(product);
+    setSelectedProduct(product);
+    setShowInquiryModal(true);
     setInquiryData({
       name: '',
       email: '',
       address: '',
-      message: ''
+      message:
+        `I'm interested in: ${product.name}\n` +
+        `Category: ${product.category}\n` +
+        `Flavor: ${product.flavor || 'N/A'}\n` +
+        `Description: ${product.description || 'N/A'}\n` +
+        `SKU: ${product.sku || 'N/A'}\n` +
+        `Price: ₹${product.price || 'Contact for price'}\n` +
+        `Product Image: ${imageUrl}\n` +
+        `Product URL: ${productUrl}\n\n` +
+        `Please provide more information about pricing and availability.`
     });
-    setSelectedProduct(null);
   };
+
+  const closeModal = () => {
+    setShowInquiryModal(false);
+    setSelectedProduct(null);
+    setInquiryData({ name: '', email: '', address: '', message: '' });
+  };
+
+  const handleEmailSubmit = () => {
+    if (!selectedProduct) return;
+    const { name, email, address, message } = inquiryData;
+    const { imageUrl, productUrl } = buildUrls(selectedProduct);
+    const subject = `Inquiry about ${selectedProduct.name}`;
+    const body =
+      `Name: ${name}\nEmail: ${email}\nAddress: ${address}\n\n` +
+      `Product Details:\nProduct: ${selectedProduct.name}\nCategory: ${selectedProduct.category}\n` +
+      `Flavor: ${selectedProduct.flavor || 'N/A'}\nDescription: ${selectedProduct.description || 'N/A'}\n` +
+      `SKU: ${selectedProduct.sku || 'N/A'}\n` +
+      `Price: ₹${selectedProduct.price || 'Contact for price'}\n` +
+      `Product Image URL: ${imageUrl}\nProduct Page URL: ${productUrl}\n\n` +
+      `Message:\n${message}`;
+    window.location.href = `mailto:suryachikki.admin@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    closeModal();
+  };
+
+  const handleWhatsAppSubmit = () => {
+    if (!selectedProduct) return;
+    const { name, email, address, message } = inquiryData;
+    const { imageUrl, productUrl } = buildUrls(selectedProduct);
+    const text =
+      `*Inquiry about ${selectedProduct.name}*\n\n` +
+      `*Name:* ${name}\n*Email:* ${email}\n*Address:* ${address}\n\n` +
+      `*Product Details:*\nProduct: ${selectedProduct.name}\nCategory: ${selectedProduct.category}\n` +
+      `Flavor: ${selectedProduct.flavor || 'N/A'}\nDescription: ${selectedProduct.description || 'N/A'}\n` +
+      `SKU: ${selectedProduct.sku || 'N/A'}\n` +
+      `Price: ₹${selectedProduct.price || 'Contact for price'}\n` +
+      `Product Image: ${imageUrl}\nProduct Page: ${productUrl}\n\n` +
+      `*Message:*\n${message}`;
+    const waUrl = `https://wa.me/919429946364?text=${encodeURIComponent(text)}`;
+    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      window.location.href = waUrl;
+    } else {
+      window.open(waUrl, '_blank');
+    }
+    closeModal();
+  };
+
+  const canSubmit = Boolean(inquiryData.name && inquiryData.email && inquiryData.message);
 
   return (
     <>
-      {/* ✅ STRUCTURED DATA SCRIPT - FIXED */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      {/* ✅ META TAGS */}
-      <Head>
-        <title>Surya Chikki - Best Sharbat Collection | Refreshing Indian Drinks</title>
-        <meta name="description" content="Explore our refreshing sharbat collection - Mango Sharbat, Orange Sharbat, Rose Sharbat, and more. Best sharbat in India since 1974." />
-        <meta name="keywords" content="sharbat, best sharbat, mango sharbat, orange sharbat, rose sharbat, Indian drinks, refreshing sharbat, Surya Chikki" />
-        <link rel="canonical" href="https://suryachikki.com/sharbat" />
-      </Head>
+      <style>{CSS}</style>
 
-      <section style={{
-        padding: '80px 0',
-        background: 'linear-gradient(135deg, #FFF5F0 0%, #FDE8E0 100%)',
-        minHeight: '100vh'
-      }}>
+      <section className="sh-shell">
         <Container>
           {/* Header */}
           <div className="text-center mb-5">
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '15px',
-              marginBottom: '20px'
-            }}>
-              <div style={{ flex: 1, minWidth: '200px' }}>
-                <h1 style={{
-                  fontSize: '3.5rem',
-                  fontWeight: '800',
-                  color: '#1a1a2e',
-                  fontFamily: "'Playfair Display', serif",
-                  marginBottom: '5px'
-                }}>
-                  Best <span style={{ color: '#DC143C' }}>Sharbat</span> Collection
-                </h1>
-                <p style={{ color: '#777', fontSize: '1.1rem', marginBottom: 0 }}>
-                  Refreshing sharbat made with natural ingredients since 1975
-                </p>
-              </div>
-            </div>
+            <h1 className="sh-h1">
+              Best <span className="accent">Sharbat</span> Collection
+            </h1>
+            <p className="sh-lead">
+              Refreshing sharbat made with natural ingredients since 1975
+            </p>
           </div>
 
-          {/* Search and Filter */}
-          <Row className="mb-4">
-            <Col md={4} className="mb-3 mb-md-0">
+          {/* Search + Filter */}
+          <Row className="mb-4 g-3">
+            <Col md={4}>
               <Form.Control
                 type="text"
                 placeholder="Search sharbat by name or flavor..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  borderRadius: '50px',
-                  padding: '12px 20px',
-                  border: '2px solid #f0e6e6'
-                }}
+                className="sh-search"
               />
             </Col>
             <Col md={8}>
-              <div className="d-flex flex-wrap gap-2">
-                {categories.map((category) => (
+              <div className="sh-filters">
+                {CATEGORIES.map((category) => (
                   <Button
                     key={category}
-                    variant={selectedCategory === category ? 'danger' : 'outline-danger'}
-                    style={{
-                      borderRadius: '50px',
-                      padding: '8px 25px',
-                      fontWeight: '600',
-                      fontSize: '0.9rem'
-                    }}
                     onClick={() => setSelectedCategory(category)}
-                    size="sm"
+                    className={`sh-chip ${selectedCategory === category ? 'on' : ''}`}
                   >
                     {category}
                   </Button>
@@ -359,155 +311,43 @@ const SharbatProducts = () => {
             </Col>
           </Row>
 
-          {/* Products Grid */}
+          {/* Grid */}
           {filteredProducts.length === 0 ? (
             <div className="text-center py-5">
-              <div style={{ fontSize: '4rem' }}>🧃</div>
-              <h3 className="mt-3">No sharbat found</h3>
-              <p className="text-secondary">Try adjusting your search or filter</p>
+              <div style={{ fontSize: '3.5rem', lineHeight: 1 }}>🧃</div>
+              <h3 className="mt-3 sh-empty-h">No sharbat found</h3>
+              <p className="sh-empty-p">Try adjusting your search or filter</p>
             </div>
           ) : (
             <Row className="g-4">
               {filteredProducts.map((product) => (
                 <Col key={product.id} lg={3} md={6} sm={6} xs={12}>
-                  <div style={{
-                    background: 'white',
-                    borderRadius: '15px',
-                    overflow: 'hidden',
-                    boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-5px)';
-                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)';
-                  }}>
-                    {/* Image Container */}
-                    <div style={{
-                      position: 'relative',
-                      width: '100%',
-                      height: '300px',
-                      background: '#f8f9fa',
-                      overflow: 'hidden',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
+                  <div className="sh-card">
+                    <div className="sh-img-wrap">
                       <img
-                        src={imageErrors[product.id] ? 'https://via.placeholder.com/300x300/FF6B6B/FFFFFF?text=Surya+Sharbat' : product.image}
+                        src={imageErrors[product.id] ? FALLBACK_IMG : product.image}
                         alt={product.name}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'contain',
-                          objectPosition: 'center',
-                          padding: '10px'
-                        }}
+                        className="sh-img"
+                        loading="lazy"
+                        decoding="async"
                         onError={(e) => handleImageError(product.id, e)}
                       />
-                      
-                      {/* Special Badge */}
                       {product.isSpecial && (
-                        <div style={{
-                          position: 'absolute',
-                          top: '10px',
-                          right: '10px',
-                          background: '#DC143C',
-                          color: 'white',
-                          padding: '5px 15px',
-                          borderRadius: '20px',
-                          fontSize: '12px',
-                          fontWeight: 'bold',
-                          boxShadow: '0 2px 10px rgba(220,20,60,0.3)'
-                        }}>
-                          ⭐ Special
-                        </div>
+                        <div className="sh-special">⭐ Special</div>
                       )}
                     </div>
 
-                    {/* Content */}
-                    <div style={{ padding: '15px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <h5 style={{
-                        fontWeight: '700',
-                        marginBottom: '5px',
-                        color: '#1a1a2e',
-                        fontSize: '1rem'
-                      }}>
-                        {product.name}
-                      </h5>
+                    <div className="sh-body">
+                      <h5 className="sh-name">{product.name}</h5>
                       {product.flavor && (
-                        <Badge
-                          style={{
-                            background: '#e8f0fe',
-                            color: '#1a73e8',
-                            padding: '3px 12px',
-                            borderRadius: '20px',
-                            fontSize: '11px',
-                            fontWeight: '600',
-                            marginBottom: '8px',
-                            display: 'inline-block',
-                            width: 'fit-content'
-                          }}
-                        >
-                          🍃 {product.flavor}
-                        </Badge>
+                        <Badge className="sh-flavor">🍃 {product.flavor}</Badge>
                       )}
-                      <p style={{
-                        color: '#777',
-                        fontSize: '0.85rem',
-                        marginBottom: '10px',
-                        minHeight: '40px'
-                      }}>
-                        {product.description || 'Refreshing sharbat'}
-                      </p>
-                      <div style={{ marginTop: 'auto' }}>
-                        <Badge
-                          style={{
-                            background: '#f0e6e6',
-                            color: '#DC143C',
-                            padding: '5px 15px',
-                            borderRadius: '20px',
-                            fontSize: '11px',
-                            fontWeight: '600',
-                            marginBottom: '10px',
-                            display: 'inline-block'
-                          }}
-                        >
-                          {product.category}
-                        </Badge>
-                        
-                        {/* Inquiry Button */}
+                      <p className="sh-desc">{product.description || 'Refreshing sharbat'}</p>
+                      <div className="sh-foot">
+                        <Badge className="sh-cat">{product.category}</Badge>
                         <Button
                           onClick={() => handleInquiryClick(product)}
-                          style={{
-                            background: '#DC143C',
-                            border: 'none',
-                            padding: '8px 15px',
-                            borderRadius: '50px',
-                            fontWeight: '600',
-                            fontSize: '13px',
-                            width: '100%',
-                            marginTop: '10px',
-                            transition: 'all 0.3s ease',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '8px'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.transform = 'scale(1.02)';
-                            e.target.style.boxShadow = '0 4px 12px rgba(220,20,60,0.3)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.transform = 'scale(1)';
-                            e.target.style.boxShadow = 'none';
-                          }}
+                          className="sh-inquiry"
                         >
                           <span>🧃</span> Inquiry Now
                         </Button>
@@ -519,74 +359,41 @@ const SharbatProducts = () => {
             </Row>
           )}
 
+          {/* Footer */}
+          <div className="text-center mt-5">
+            <p className="sh-count">
+              Showing {filteredProducts.length} of {SHARBAT_PRODUCTS.length} sharbat varieties
+            </p>
+          </div>
+
           {/* Inquiry Modal */}
-          <Modal
-            show={showInquiryModal}
-            onHide={() => {
-              setShowInquiryModal(false);
-              resetForm();
-            }}
-            size="lg"
-            centered
-          >
-            <Modal.Header closeButton style={{ borderBottom: '2px solid #f0e6e6' }}>
-              <Modal.Title style={{ color: '#DC143C', fontWeight: '700' }}>
+          <Modal show={showInquiryModal} onHide={closeModal} size="lg" centered>
+            <Modal.Header closeButton className="sh-modal-head">
+              <Modal.Title className="sh-modal-title">
                 🧃 Inquiry About {selectedProduct?.name || 'Sharbat'}
               </Modal.Title>
             </Modal.Header>
-            <Modal.Body style={{ padding: '30px' }}>
+            <Modal.Body className="sh-modal-body">
               {selectedProduct && (
-                <div style={{
-                  background: '#FFF8F8',
-                  padding: '15px',
-                  borderRadius: '10px',
-                  marginBottom: '20px',
-                  borderLeft: '4px solid #DC143C'
-                }}>
-                  <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
-                    <div style={{
-                      width: '80px',
-                      height: '80px',
-                      borderRadius: '8px',
-                      overflow: 'hidden',
-                      background: '#f0f0f0',
-                      flexShrink: 0
-                    }}>
-                      <img
-                        src={selectedProduct.image}
-                        alt={selectedProduct.name}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'contain',
-                          padding: '5px'
-                        }}
-                        onError={(e) => {
-                          e.target.src = 'https://via.placeholder.com/80x80/FF6B6B/FFFFFF?text=Surya+Sharbat';
-                        }}
-                      />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <h6 style={{ fontWeight: '700', color: '#1a1a2e' }}>Product Details:</h6>
-                      <p style={{ marginBottom: '5px' }}>
-                        <strong>Product:</strong> {selectedProduct.name}
-                      </p>
-                      <p style={{ marginBottom: '5px' }}>
-                        <strong>Category:</strong> {selectedProduct.category}
-                      </p>
-                      <p style={{ marginBottom: '5px' }}>
-                        <strong>Flavor:</strong> {selectedProduct.flavor || 'N/A'}
-                      </p>
-                      <p style={{ marginBottom: '5px' }}>
-                        <strong>Description:</strong> {selectedProduct.description || 'N/A'}
-                      </p>
-                      <p style={{ marginBottom: '5px', color: '#DC143C', fontWeight: 'bold' }}>
-                        <strong>Price:</strong> ₹{selectedProduct.price || 'Contact for price'}
-                      </p>
-                      <p style={{ marginBottom: '0', fontSize: '12px', color: '#666' }}>
-                        <strong>Product URL:</strong> {window.location.origin + `/sharbat-product/${generateProductSlug(selectedProduct.name, selectedProduct.id)}`}
-                      </p>
-                    </div>
+                <div className="sh-modal-product">
+                  <div className="sh-modal-img">
+                    <img
+                      src={imageErrors[selectedProduct.id] ? FALLBACK_IMG : selectedProduct.image}
+                      alt={selectedProduct.name}
+                      onError={(e) => {
+                        e.target.src = FALLBACK_IMG;
+                        e.target.onerror = null;
+                      }}
+                    />
+                  </div>
+                  <div className="sh-modal-details">
+                    <h6 className="sh-modal-sub">Product Details:</h6>
+                    <p><strong>Product:</strong> {selectedProduct.name}</p>
+                    <p><strong>Category:</strong> {selectedProduct.category}</p>
+                    <p><strong>Flavor:</strong> {selectedProduct.flavor || 'N/A'}</p>
+                    <p><strong>Description:</strong> {selectedProduct.description || 'N/A'}</p>
+                    <p className="sh-price"><strong>Price:</strong> ₹{selectedProduct.price || 'Contact for price'}</p>
+                    <p className="sh-url"><strong>Product URL:</strong> {origin() + `/sharbat-product/${slugify(selectedProduct.name, selectedProduct.id)}`}</p>
                   </div>
                 </div>
               )}
@@ -595,7 +402,7 @@ const SharbatProducts = () => {
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label style={{ fontWeight: '600' }}>Full Name *</Form.Label>
+                      <Form.Label className="sh-label">Full Name *</Form.Label>
                       <Form.Control
                         type="text"
                         name="name"
@@ -603,13 +410,13 @@ const SharbatProducts = () => {
                         onChange={handleInputChange}
                         placeholder="Enter your full name"
                         required
-                        style={{ borderRadius: '10px', padding: '12px' }}
+                        className="sh-input"
                       />
                     </Form.Group>
                   </Col>
                   <Col md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label style={{ fontWeight: '600' }}>Email Address *</Form.Label>
+                      <Form.Label className="sh-label">Email Address *</Form.Label>
                       <Form.Control
                         type="email"
                         name="email"
@@ -617,26 +424,26 @@ const SharbatProducts = () => {
                         onChange={handleInputChange}
                         placeholder="Enter your email"
                         required
-                        style={{ borderRadius: '10px', padding: '12px' }}
+                        className="sh-input"
                       />
                     </Form.Group>
                   </Col>
                 </Row>
 
                 <Form.Group className="mb-3">
-                  <Form.Label style={{ fontWeight: '600' }}>Address</Form.Label>
+                  <Form.Label className="sh-label">Address</Form.Label>
                   <Form.Control
                     type="text"
                     name="address"
                     value={inquiryData.address}
                     onChange={handleInputChange}
                     placeholder="Enter your address"
-                    style={{ borderRadius: '10px', padding: '12px' }}
+                    className="sh-input"
                   />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label style={{ fontWeight: '600' }}>Message *</Form.Label>
+                  <Form.Label className="sh-label">Message *</Form.Label>
                   <Form.Control
                     as="textarea"
                     rows="4"
@@ -645,70 +452,303 @@ const SharbatProducts = () => {
                     onChange={handleInputChange}
                     placeholder="Write your message here..."
                     required
-                    style={{ borderRadius: '10px', padding: '12px' }}
+                    className="sh-input"
                   />
                 </Form.Group>
 
-                <div className="d-flex gap-3 flex-wrap">
-                  <Button
-                    onClick={handleEmailSubmit}
-                    style={{
-                      background: '#DC143C',
-                      border: 'none',
-                      padding: '12px 30px',
-                      borderRadius: '50px',
-                      fontWeight: '600',
-                      flex: 1,
-                      minWidth: '150px'
-                    }}
-                    disabled={!inquiryData.name || !inquiryData.email || !inquiryData.message}
-                  >
+                <div className="sh-note">
+                  <p><strong>📌 Note:</strong> Product details, image URL, and product page URL will be included with your inquiry.</p>
+                </div>
+
+                <div className="sh-actions">
+                  <Button onClick={handleEmailSubmit} className="sh-btn email" disabled={!canSubmit}>
                     ✉️ Send via Email
                   </Button>
-                  <Button
-                    onClick={handleWhatsAppSubmit}
-                    style={{
-                      background: '#25D366',
-                      border: 'none',
-                      padding: '12px 30px',
-                      borderRadius: '50px',
-                      fontWeight: '600',
-                      flex: 1,
-                      minWidth: '150px'
-                    }}
-                    disabled={!inquiryData.name || !inquiryData.email || !inquiryData.message}
-                  >
+                  <Button onClick={handleWhatsAppSubmit} className="sh-btn wa" disabled={!canSubmit}>
                     💬 Send via WhatsApp
                   </Button>
-                  <Button
-                    variant="outline-secondary"
-                    onClick={() => {
-                      setShowInquiryModal(false);
-                      resetForm();
-                    }}
-                    style={{
-                      borderRadius: '50px',
-                      padding: '12px 30px',
-                      fontWeight: '600'
-                    }}
-                  >
+                  <Button variant="outline-secondary" onClick={closeModal} className="sh-btn cancel">
                     Cancel
                   </Button>
                 </div>
               </Form>
             </Modal.Body>
           </Modal>
-
-          {/* Footer Stats */}
-          <div className="text-center mt-5">
-            <p style={{ color: '#777' }}>
-              Showing {filteredProducts.length} of {sharbatProducts.length} sharbat varieties
-            </p>
-          </div>
         </Container>
       </section>
     </>
   );
 };
+
+/* ═══════════════════════════════════════════════════════════
+   CSS — light yellow theme, GPU-friendly hover, no gradients
+   ═══════════════════════════════════════════════════════════ */
+const CSS = `
+  :root{
+    --y:#F2B705; --y-dk:#C99400; --y-lt:#FFD966;
+    --ink:#1a1600; --ink-soft:#2e2a1a;
+    --mut:#6b6248; --line:rgba(120,100,20,.14);
+    --cream:#FFFDF5; --cream-2:#FFF8E1;
+  }
+
+  .sh-shell{
+    padding:80px 0;
+    background:var(--cream);
+    min-height:100vh;
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  }
+  .accent{color:var(--y-dk);}
+
+  .sh-h1{
+    font-family:Georgia,'Times New Roman',serif;
+    font-size:clamp(2.2rem,5vw,3.5rem);
+    font-weight:800;
+    color:var(--ink);
+    line-height:1.1;
+    margin-bottom:.5rem;
+  }
+  .sh-lead{color:var(--mut);font-size:1.05rem;margin:0;}
+
+  /* Search */
+  .sh-search{
+    border-radius:50px !important;
+    padding:12px 20px !important;
+    border:2px solid var(--line) !important;
+    background:#fff;
+    font-size:.95rem;
+  }
+  .sh-search:focus{
+    border-color:var(--y) !important;
+    box-shadow:0 0 0 3px rgba(242,183,5,.18) !important;
+  }
+
+  /* Filter chips */
+  .sh-filters{display:flex;flex-wrap:wrap;gap:8px;}
+  .sh-chip{
+    border-radius:50px !important;
+    padding:8px 22px !important;
+    font-weight:600 !important;
+    font-size:.85rem !important;
+    border:1.5px solid var(--y-dk) !important;
+    background:transparent !important;
+    color:var(--y-dk) !important;
+    transition:background-color .15s ease,color .15s ease !important;
+  }
+  .sh-chip:hover{background:var(--cream-2) !important;}
+  .sh-chip.on{
+    background:var(--y) !important;
+    color:var(--ink) !important;
+    border-color:var(--y) !important;
+  }
+
+  /* Product card */
+  .sh-card{
+    background:#fff;
+    border-radius:15px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    transition:transform .25s ease;
+    will-change:transform;
+  }
+  .sh-card:hover{transform:translate3d(0,-4px,0);}
+
+  .sh-img-wrap{
+    position:relative;
+    width:100%;
+    height:270px;
+    background:var(--cream-2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+  .sh-img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    object-position:center;
+    padding:10px;
+  }
+
+  .sh-special{
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:var(--y);
+    color:var(--ink);
+    padding:5px 14px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
+  }
+
+  .sh-body{
+    padding:16px;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+  }
+  .sh-name{
+    font-weight:700;
+    margin-bottom:8px;
+    color:var(--ink);
+    font-size:1rem;
+  }
+
+  /* Flavor badge — soft yellow tint, distinct from category */
+  .sh-flavor{
+    background:rgba(242,183,5,.15) !important;
+    color:var(--y-dk) !important;
+    padding:3px 11px !important;
+    border-radius:20px !important;
+    font-size:11px !important;
+    font-weight:600 !important;
+    display:inline-block;
+    width:fit-content;
+    margin-bottom:8px !important;
+    border:1px solid rgba(242,183,5,.35);
+  }
+
+  .sh-desc{
+    color:var(--mut);
+    font-size:.85rem;
+    margin-bottom:12px;
+    min-height:40px;
+    line-height:1.5;
+  }
+  .sh-foot{margin-top:auto;}
+
+  .sh-cat{
+    background:var(--cream-2) !important;
+    color:var(--y-dk) !important;
+    padding:5px 14px !important;
+    border-radius:20px !important;
+    font-size:11px !important;
+    font-weight:600 !important;
+    display:inline-block;
+    border:1px solid var(--line);
+  }
+
+  .sh-inquiry{
+    background:var(--y) !important;
+    color:var(--ink) !important;
+    border:none !important;
+    padding:9px 15px !important;
+    border-radius:50px !important;
+    font-weight:600 !important;
+    font-size:13px !important;
+    width:100%;
+    margin-top:12px;
+    display:flex !important;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    transition:background-color .15s ease !important;
+  }
+  .sh-inquiry:hover{background:var(--y-dk) !important;color:var(--ink) !important;}
+
+  /* Empty state */
+  .sh-empty-h{color:var(--ink);font-weight:700;}
+  .sh-empty-p{color:var(--mut);}
+  .sh-count{color:var(--mut);margin:0;}
+
+  /* Modal */
+  .sh-modal-head{border-bottom:2px solid var(--line) !important;}
+  .sh-modal-title{color:var(--y-dk) !important;font-weight:700;}
+  .sh-modal-body{padding:24px !important;}
+
+  .sh-modal-product{
+    background:var(--cream-2);
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+    border-left:4px solid var(--y);
+    display:flex;
+    gap:15px;
+    align-items:flex-start;
+  }
+  .sh-modal-img{
+    width:80px;height:80px;
+    border-radius:8px;
+    overflow:hidden;
+    background:#fff;
+    flex-shrink:0;
+    border:1px solid var(--line);
+  }
+  .sh-modal-img img{
+    width:100%;height:100%;
+    object-fit:contain;padding:4px;
+  }
+  .sh-modal-details{flex:1;min-width:0;}
+  .sh-modal-sub{font-weight:700;color:var(--ink);margin-bottom:6px;}
+  .sh-modal-details p{margin-bottom:4px;font-size:.9rem;color:#4a4126;}
+  .sh-price{color:var(--y-dk) !important;font-weight:700;}
+  .sh-url{font-size:.72rem !important;color:var(--mut) !important;word-break:break-all;}
+
+  .sh-label{font-weight:600;color:var(--ink);font-size:.9rem;}
+  .sh-input{
+    border-radius:10px !important;
+    padding:10px 12px !important;
+    border:1px solid var(--line) !important;
+    font-size:.92rem;
+  }
+  .sh-input:focus{
+    border-color:var(--y) !important;
+    box-shadow:0 0 0 3px rgba(242,183,5,.18) !important;
+  }
+
+  .sh-note{
+    background:var(--cream-2);
+    padding:12px 15px;
+    border-radius:10px;
+    margin-bottom:20px;
+    border:1px solid var(--line);
+  }
+  .sh-note p{margin:0;font-size:.85rem;color:var(--mut);}
+
+  .sh-actions{display:flex;gap:12px;flex-wrap:wrap;}
+  .sh-btn{
+    border:none !important;
+    padding:12px 28px !important;
+    border-radius:50px !important;
+    font-weight:600 !important;
+    flex:1;
+    min-width:150px;
+    transition:background-color .15s ease !important;
+    font-size:.9rem !important;
+  }
+  .sh-btn.email{background:var(--y) !important;color:var(--ink) !important;}
+  .sh-btn.email:hover{background:var(--y-dk) !important;}
+  .sh-btn.wa{background:#25D366 !important;color:#fff !important;}
+  .sh-btn.wa:hover{background:#1EA952 !important;}
+  .sh-btn.cancel{
+    background:transparent !important;
+    color:var(--mut) !important;
+    border:1px solid var(--line) !important;
+    flex:0 0 auto !important;
+  }
+  .sh-btn.cancel:hover{background:var(--cream-2) !important;color:var(--ink) !important;}
+
+  .sh-btn:disabled{opacity:.5;cursor:not-allowed;}
+
+  /* Responsive */
+  @media (max-width:767px){
+    .sh-shell{padding:50px 0;}
+    .sh-img-wrap{height:220px;}
+    .sh-actions{flex-direction:column;}
+    .sh-btn{width:100%;flex:none !important;}
+    .sh-modal-product{flex-direction:column;align-items:stretch;}
+    .sh-modal-img{width:100%;height:120px;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .sh-card,.sh-chip,.sh-inquiry,.sh-btn{transition:none !important;}
+    .sh-card:hover{transform:none;}
+  }
+`;
 
 export default SharbatProducts;

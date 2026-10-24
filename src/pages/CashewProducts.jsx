@@ -1,334 +1,274 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Container, Row, Col, Form, Button, Badge, Modal } from 'react-bootstrap';
 
-// Simple Head component for meta tags (replaces next/head)
-const Head = ({ children }) => {
-  return <>{children}</>;
-};
+// ─── Static data hoisted ───
+const CASHEW_PRODUCTS = [
+  {
+    id: 2,
+    name: 'Blueberry Cashew',
+    image: '/images/cashew/images (2).webp',
+    category: 'Flavoured Cashew',
+    isSpecial: true,
+    description: 'Sweet-tart blueberry-coated cashews with a bright fruity crunch. Perfect for a fresh, modern snack.',
+    sku: 'CSH-002',
+    price: '540.00'
+  },
+  {
+    id: 4,
+    name: 'Classic Salted Cashew',
+    image: '/images/cashew/images (4).webp',
+    category: 'Salted Cashew',
+    isSpecial: false,
+    description: 'Our signature classic salted cashews. Simple, honest, and perfectly roasted with just the right salt balance.',
+    sku: 'CSH-003',
+    price: '450.00'
+  },
+  {
+    id: 6,
+    name: 'Cheese Jalapeno Cashew',
+    image: '/images/cashew/images (6).webp',
+    category: 'Flavoured Cashew',
+    isSpecial: true,
+    description: 'Savory cheese and spicy jalapeno flavoured cashews — an addictive, punchy snack that keeps you coming back.',
+    sku: 'CSH-004',
+    price: '500.00'
+  },
+  {
+    id: 7,
+    name: 'Guava Twist Cashew',
+    image: '/images/cashew/images (7).webp',
+    category: 'Flavoured Cashew',
+    isSpecial: true,
+    description: 'Tangy guava-coated cashews with a tropical twist. Sweet, fruity, and utterly refreshing.',
+    sku: 'CSH-005',
+    price: '510.00'
+  },
+  {
+    id: 8,
+    name: 'Peri Peri Lime Cashew',
+    image: '/images/cashew/images (8).webp',
+    category: 'Flavoured Cashew',
+    isSpecial: true,
+    description: 'Zesty lime meets bold peri peri spice — a fiery, tangy cashew snack with an unforgettable kick.',
+    sku: 'CSH-006',
+    price: '520.00'
+  }
+];
+
+const CATEGORIES = ['All', ...new Set(CASHEW_PRODUCTS.map(p => p.category))];
+
+const FALLBACK_IMG =
+  'data:image/svg+xml;charset=UTF-8,' +
+  encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+      <rect fill="#FFF8E1" width="300" height="300"/>
+      <text x="150" y="150" font-family="Arial,sans-serif" font-size="18"
+            fill="#C99400" text-anchor="middle" dominant-baseline="middle">
+        Surya Cashew
+      </text>
+    </svg>`
+  );
+
+const slugify = (name, id) =>
+  `${id}-${String(name)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')}`;
+
+const origin = () => (typeof window !== 'undefined' ? window.location.origin : '');
 
 const CashewProducts = () => {
-  // Product data — 10 cashew products mapped to images (1)–(10)
-  const cashewProducts = [
-    
-    {
-      id: 2,
-      name: "Blueberry Cashew",
-      image: '/images/cashew/images (2).png',
-      category: "Flavoured Cashew",
-      isSpecial: true,
-      description: "Sweet-tart blueberry-coated cashews with a bright fruity crunch. Perfect for a fresh, modern snack.",
-      sku: "CSH-002",
-      price: "540.00"
-    },
-   
-    {
-      id: 4,
-      name: "Classic Salted Cashew",
-      image: '/images/cashew/images (4).png',
-      category: "Salted Cashew",
-      isSpecial: false,
-      description: "Our signature classic salted cashews. Simple, honest, and perfectly roasted with just the right salt balance.",
-      sku: "CSH-003",
-      price: "450.00"
-    },
-    
-    {
-      id: 6,
-      name: "Cheese Jalapeno Cashew",
-      image: '/images/cashew/images (6).png',
-      category: "Flavoured Cashew",
-      isSpecial: true,
-      description: "Savory cheese and spicy jalapeno flavoured cashews — an addictive, punchy snack that keeps you coming back.",
-      sku: "CSH-004",
-      price: "500.00"
-    },
-    {
-      id: 7,
-      name: "Guava Twist Cashew",
-      image: '/images/cashew/images (7).png',
-      category: "Flavoured Cashew",
-      isSpecial: true,
-      description: "Tangy guava-coated cashews with a tropical twist. Sweet, fruity, and utterly refreshing.",
-      sku: "CSH-005",
-      price: "510.00"
-    },
-    {
-      id: 8,
-      name: "Peri Peri Lime Cashew",
-      image: '/images/cashew/images (8).png',
-      category: "Flavoured Cashew",
-      isSpecial: true,
-      description: "Zesty lime meets bold peri peri spice — a fiery, tangy cashew snack with an unforgettable kick.",
-      sku: "CSH-006",
-      price: "520.00"
-    },
-    
-  ];
-
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [imageErrors, setImageErrors] = useState({});
   const [showInquiryModal, setShowInquiryModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [inquiryData, setInquiryData] = useState({
-    name: '',
-    email: '',
-    address: '',
-    message: ''
-  });
+  const [inquiryData, setInquiryData] = useState({ name: '', email: '', address: '', message: '' });
 
-  // ✅ GENERATE PRODUCT SLUG
-  const generateProductSlug = (name, id) => {
-    const slug = name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
-    return `${id}-${slug}`;
-  };
-
-  // ✅ COMPLETE STRUCTURED DATA GENERATOR
-  const generateProductStructuredData = () => {
+  // Structured data — built once
+  const structuredData = useMemo(() => {
+    const base = origin();
     return {
-      "@context": "https://schema.org",
-      "@graph": cashewProducts.map(product => {
-        const productSlug = generateProductSlug(product.name, product.id);
-        const productUrl = window.location.origin + `/cashew/${productSlug}`;
-        const imageUrl = window.location.origin + product.image;
-        
+      '@context': 'https://schema.org',
+      '@graph': CASHEW_PRODUCTS.map(product => {
+        const productUrl = `${base}/cashew/${slugify(product.name, product.id)}`;
+        const imageUrl = `${base}${product.image}`;
         return {
-          "@type": "Product",
-          "name": product.name,
-          "description": product.description || "Premium cashew",
-          "image": {
-            "@type": "ImageObject",
-            "url": imageUrl,
-            "width": "300",
-            "height": "300",
-            "caption": product.name
+          '@type': 'Product',
+          name: product.name,
+          description: product.description || 'Premium cashew',
+          image: {
+            '@type': 'ImageObject',
+            url: imageUrl,
+            width: '300',
+            height: '300',
+            caption: product.name
           },
-          "category": product.category,
-          "url": productUrl,
-          "sku": product.sku || `SKU-${String(product.id).padStart(4, '0')}`,
-          "mpn": `MPN-${String(product.id).padStart(4, '0')}`,
-          "brand": {
-            "@type": "Brand",
-            "name": "Surya Chikki"
+          category: product.category,
+          url: productUrl,
+          sku: product.sku || `SKU-${String(product.id).padStart(4, '0')}`,
+          mpn: `MPN-${String(product.id).padStart(4, '0')}`,
+          brand: { '@type': 'Brand', name: 'Surya Chikki' },
+          manufacturer: { '@type': 'Organization', name: 'Surya Chikki' },
+          offers: {
+            '@type': 'Offer',
+            price: product.price || '0.00',
+            priceCurrency: 'INR',
+            priceValidUntil: '2026-12-31',
+            availability: 'https://schema.org/InStock',
+            url: productUrl,
+            seller: { '@type': 'Organization', name: 'Surya Chikki' }
           },
-          "manufacturer": {
-            "@type": "Organization",
-            "name": "Surya Chikki"
+          review: {
+            '@type': 'Review',
+            reviewRating: { '@type': 'Rating', ratingValue: '4.7', bestRating: '5' },
+            author: { '@type': 'Person', name: 'Surya Chikki Customer' }
           },
-          "offers": {
-            "@type": "Offer",
-            "price": product.price || "0.00",
-            "priceCurrency": "INR",
-            "priceValidUntil": "2026-12-31",
-            "availability": "https://schema.org/InStock",
-            "url": productUrl,
-            "seller": {
-              "@type": "Organization",
-              "name": "Surya Chikki"
-            }
-          },
-          "review": {
-            "@type": "Review",
-            "reviewRating": {
-              "@type": "Rating",
-              "ratingValue": "4.7",
-              "bestRating": "5"
-            },
-            "author": {
-              "@type": "Person",
-              "name": "Surya Chikki Customer"
-            }
-          },
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "reviewCount": "127",
-            "bestRating": "5",
-            "worstRating": "1"
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: '4.8',
+            reviewCount: '127',
+            bestRating: '5',
+            worstRating: '1'
           }
         };
       })
     };
-  };
+  }, []);
 
-  const structuredData = generateProductStructuredData();
-
-  // Get unique categories
-  const categories = ['All', ...new Set(cashewProducts.map(p => p.category))];
-
-  const filteredProducts = cashewProducts.filter(product => {
-    const matchCategory = selectedCategory === 'All' || product.category === selectedCategory;
-    const matchSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                       (product.description && product.description.toLowerCase().includes(searchTerm.toLowerCase()));
-    return matchCategory && matchSearch;
-  });
+  // Filtering memoized
+  const filteredProducts = useMemo(() => {
+    const q = searchTerm.toLowerCase().trim();
+    return CASHEW_PRODUCTS.filter(p => {
+      const matchCat = selectedCategory === 'All' || p.category === selectedCategory;
+      const matchSearch = !q || p.name.toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q);
+      return matchCat && matchSearch;
+    });
+  }, [searchTerm, selectedCategory]);
 
   const handleImageError = (productId, e) => {
-    console.error(`❌ Failed to load image for product ${productId}:`, e.target.src);
-    setImageErrors(prev => ({ ...prev, [productId]: true }));
-    e.target.src = 'https://via.placeholder.com/300x300/FF6B6B/FFFFFF?text=Surya+Cashew';
+    e.target.src = FALLBACK_IMG;
     e.target.onerror = null;
+    setImageErrors(prev => (prev[productId] ? prev : { ...prev, [productId]: true }));
   };
 
-  // Handle inquiry button click
-  const handleInquiryClick = (product) => {
-    setSelectedProduct(product);
-    setShowInquiryModal(true);
-    const imageUrl = window.location.origin + product.image;
-    const productUrl = window.location.origin + `/cashew/${generateProductSlug(product.name, product.id)}`;
-    setInquiryData(prev => ({
-      ...prev,
-      message: `I'm interested in: ${product.name}\nCategory: ${product.category}\nDescription: ${product.description || 'N/A'}\nSKU: ${product.sku || 'N/A'}\nPrice: ₹${product.price || 'Contact for price'}\nProduct Image: ${imageUrl}\nProduct URL: ${productUrl}\n\nPlease provide more information about pricing and availability.`
-    }));
-  };
-
-  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setInquiryData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setInquiryData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Handle email submission
-  const handleEmailSubmit = () => {
-    const { name, email, address, message } = inquiryData;
-    const imageUrl = window.location.origin + selectedProduct?.image;
-    const productUrl = window.location.origin + `/cashew/${generateProductSlug(selectedProduct?.name, selectedProduct?.id)}`;
-    const subject = `Inquiry about ${selectedProduct?.name || 'Cashew Products'}`;
-    const body = `Name: ${name}\nEmail: ${email}\nAddress: ${address}\n\nProduct Details:\nProduct: ${selectedProduct?.name || 'N/A'}\nCategory: ${selectedProduct?.category || 'N/A'}\nDescription: ${selectedProduct?.description || 'N/A'}\nSKU: ${selectedProduct?.sku || 'N/A'}\nPrice: ₹${selectedProduct?.price || 'Contact for price'}\nProduct Image URL: ${imageUrl}\nProduct Page URL: ${productUrl}\n\nMessage:\n${message}`;
-    
-    window.location.href = `mailto:suryachikki.admin@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setShowInquiryModal(false);
-    resetForm();
+  const buildUrls = (product) => {
+    const base = origin();
+    return {
+      imageUrl: `${base}${product.image}`,
+      productUrl: `${base}/cashew/${slugify(product.name, product.id)}`
+    };
   };
 
-  // Handle WhatsApp submission
-  const handleWhatsAppSubmit = () => {
-    const { name, email, address, message } = inquiryData;
-    const phoneNumber = '919429946364';
-    const imageUrl = window.location.origin + selectedProduct?.image;
-    const productUrl = window.location.origin + `/cashew/${generateProductSlug(selectedProduct?.name, selectedProduct?.id)}`;
-    
-    const whatsappMessage = `*Inquiry about ${selectedProduct?.name || 'Cashew Products'}*\n\n` +
-      `*Name:* ${name}\n` +
-      `*Email:* ${email}\n` +
-      `*Address:* ${address}\n\n` +
-      `*Product Details:*\n` +
-      `Product: ${selectedProduct?.name || 'N/A'}\n` +
-      `Category: ${selectedProduct?.category || 'N/A'}\n` +
-      `Description: ${selectedProduct?.description || 'N/A'}\n` +
-      `SKU: ${selectedProduct?.sku || 'N/A'}\n` +
-      `Price: ₹${selectedProduct?.price || 'Contact for price'}\n` +
-      `Product Image: ${imageUrl}\n` +
-      `Product Page: ${productUrl}\n\n` +
-      `*Message:*\n${message}`;
-    
-    const waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
-    
-    if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
-      window.location.href = waUrl;
-    } else {
-      window.open(waUrl, '_blank');
-    }
-    
-    setShowInquiryModal(false);
-    resetForm();
-  };
-
-  // Reset form
-  const resetForm = () => {
+  const handleInquiryClick = (product) => {
+    const { imageUrl, productUrl } = buildUrls(product);
+    setSelectedProduct(product);
+    setShowInquiryModal(true);
     setInquiryData({
       name: '',
       email: '',
       address: '',
-      message: ''
+      message:
+        `I'm interested in: ${product.name}\n` +
+        `Category: ${product.category}\n` +
+        `Description: ${product.description || 'N/A'}\n` +
+        `SKU: ${product.sku || 'N/A'}\n` +
+        `Price: ₹${product.price || 'Contact for price'}\n` +
+        `Product Image: ${imageUrl}\n` +
+        `Product URL: ${productUrl}\n\n` +
+        `Please provide more information about pricing and availability.`
     });
-    setSelectedProduct(null);
   };
+
+  const closeModal = () => {
+    setShowInquiryModal(false);
+    setSelectedProduct(null);
+    setInquiryData({ name: '', email: '', address: '', message: '' });
+  };
+
+  const handleEmailSubmit = () => {
+    if (!selectedProduct) return;
+    const { name, email, address, message } = inquiryData;
+    const { imageUrl, productUrl } = buildUrls(selectedProduct);
+    const subject = `Inquiry about ${selectedProduct.name}`;
+    const body =
+      `Name: ${name}\nEmail: ${email}\nAddress: ${address}\n\n` +
+      `Product Details:\nProduct: ${selectedProduct.name}\nCategory: ${selectedProduct.category}\n` +
+      `Description: ${selectedProduct.description || 'N/A'}\nSKU: ${selectedProduct.sku || 'N/A'}\n` +
+      `Price: ₹${selectedProduct.price || 'Contact for price'}\n` +
+      `Product Image URL: ${imageUrl}\nProduct Page URL: ${productUrl}\n\n` +
+      `Message:\n${message}`;
+    window.location.href = `mailto:suryachikki.admin@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    closeModal();
+  };
+
+  const handleWhatsAppSubmit = () => {
+    if (!selectedProduct) return;
+    const { name, email, address, message } = inquiryData;
+    const { imageUrl, productUrl } = buildUrls(selectedProduct);
+    const text =
+      `*Inquiry about ${selectedProduct.name}*\n\n` +
+      `*Name:* ${name}\n*Email:* ${email}\n*Address:* ${address}\n\n` +
+      `*Product Details:*\nProduct: ${selectedProduct.name}\nCategory: ${selectedProduct.category}\n` +
+      `Description: ${selectedProduct.description || 'N/A'}\nSKU: ${selectedProduct.sku || 'N/A'}\n` +
+      `Price: ₹${selectedProduct.price || 'Contact for price'}\n` +
+      `Product Image: ${imageUrl}\nProduct Page: ${productUrl}\n\n` +
+      `*Message:*\n${message}`;
+    const waUrl = `https://wa.me/919429946364?text=${encodeURIComponent(text)}`;
+    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      window.location.href = waUrl;
+    } else {
+      window.open(waUrl, '_blank');
+    }
+    closeModal();
+  };
+
+  const canSubmit = Boolean(inquiryData.name && inquiryData.email && inquiryData.message);
 
   return (
     <>
-      {/* ✅ STRUCTURED DATA SCRIPT */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      {/* ✅ META TAGS */}
-      <Head>
-        <title>Surya Cashew - Premium Flavoured Cashew & Almonds Collection</title>
-        <meta name="description" content="Explore our premium cashew and almond collection - Rose Cashew, Blueberry Cashew, Coffee Mocha Almonds, Cheese Jalapeno Cashew, Guava Twist Cashew, Peri Peri Lime Cashew, and more." />
-        <meta name="keywords" content="cashew, flavoured cashew, rose cashew, blueberry cashew, coffee mocha almonds, cheese jalapeno cashew, guava twist cashew, peri peri lime cashew, salted cashew, salted almonds, Surya Cashew" />
-        <link rel="canonical" href="https://suryachikki.com/cashew" />
-      </Head>
+      <style>{CSS}</style>
 
-      <section style={{
-        padding: '80px 0',
-        background: '#FFF8F8',
-        minHeight: '100vh'
-      }}>
+      <section className="cs-shell">
         <Container>
           {/* Header */}
           <div className="text-center mb-5">
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '15px',
-              marginBottom: '20px'
-            }}>
-              <div style={{ flex: 1, minWidth: '200px' }}>
-                <h1 style={{
-                  fontSize: '3.5rem',
-                  fontWeight: '800',
-                  color: '#1a1a2e',
-                  fontFamily: "'Playfair Display', serif",
-                  marginBottom: '5px'
-                }}>
-                  Our <span style={{ color: '#DC143C' }}>Cashew</span> Collection
-                </h1>
-                <p style={{ color: '#777', fontSize: '1.1rem', marginBottom: 0 }}>
-                  Handpicked, flavoured, and carefully roasted premium cashews &amp; almonds since 1975
-                </p>
-              </div>
-            </div>
+            <h1 className="cs-h1">
+              Our <span className="accent">Cashew</span> Collection
+            </h1>
+            <p className="cs-lead">
+              Handpicked, flavoured, and carefully roasted premium cashews &amp; almonds since 1975
+            </p>
           </div>
 
-          {/* Search and Filter */}
-          <Row className="mb-4">
-            <Col md={4} className="mb-3 mb-md-0">
+          {/* Search + Filter */}
+          <Row className="mb-4 g-3">
+            <Col md={4}>
               <Form.Control
                 type="text"
                 placeholder="Search cashew..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  borderRadius: '50px',
-                  padding: '12px 20px',
-                  border: '2px solid #f0e6e6'
-                }}
+                className="cs-search"
               />
             </Col>
             <Col md={8}>
-              <div className="d-flex flex-wrap gap-2">
-                {categories.map((category) => (
+              <div className="cs-filters">
+                {CATEGORIES.map((category) => (
                   <Button
                     key={category}
-                    variant={selectedCategory === category ? 'danger' : 'outline-danger'}
-                    style={{
-                      borderRadius: '50px',
-                      padding: '8px 25px',
-                      fontWeight: '600',
-                      fontSize: '0.9rem'
-                    }}
                     onClick={() => setSelectedCategory(category)}
-                    size="sm"
+                    className={`cs-chip ${selectedCategory === category ? 'on' : ''}`}
                   >
                     {category}
                   </Button>
@@ -337,138 +277,40 @@ const CashewProducts = () => {
             </Col>
           </Row>
 
-          {/* Products Grid */}
+          {/* Grid */}
           {filteredProducts.length === 0 ? (
             <div className="text-center py-5">
-              <div style={{ fontSize: '4rem' }}>😢</div>
-              <h3 className="mt-3">No cashew found</h3>
-              <p className="text-secondary">Try adjusting your search or filter</p>
+              <div style={{ fontSize: '3.5rem', lineHeight: 1 }}>😢</div>
+              <h3 className="mt-3 cs-empty-h">No cashew found</h3>
+              <p className="cs-empty-p">Try adjusting your search or filter</p>
             </div>
           ) : (
             <Row className="g-4">
               {filteredProducts.map((product) => (
                 <Col key={product.id} lg={3} md={6} sm={6} xs={12}>
-                  <div style={{
-                    background: 'white',
-                    borderRadius: '15px',
-                    overflow: 'hidden',
-                    boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-5px)';
-                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)';
-                  }}>
-                    {/* Image Container */}
-                    <div style={{
-                      position: 'relative',
-                      width: '100%',
-                      height: '300px',
-                      background: '#f8f9fa',
-                      overflow: 'hidden',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
+                  <div className="cs-card">
+                    <div className="cs-img-wrap">
                       <img
-                        src={imageErrors[product.id] ? 'https://via.placeholder.com/300x300/FF6B6B/FFFFFF?text=Surya+Cashew' : product.image}
+                        src={imageErrors[product.id] ? FALLBACK_IMG : product.image}
                         alt={product.name}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'contain',
-                          objectPosition: 'center',
-                          padding: '10px'
-                        }}
+                        className="cs-img"
+                        loading="lazy"
+                        decoding="async"
                         onError={(e) => handleImageError(product.id, e)}
                       />
-                      
-                      {/* Special Badge */}
                       {product.isSpecial && (
-                        <div style={{
-                          position: 'absolute',
-                          top: '10px',
-                          right: '10px',
-                          background: '#DC143C',
-                          color: 'white',
-                          padding: '5px 15px',
-                          borderRadius: '20px',
-                          fontSize: '12px',
-                          fontWeight: 'bold',
-                          boxShadow: '0 2px 10px rgba(220,20,60,0.3)'
-                        }}>
-                          ⭐ Special
-                        </div>
+                        <div className="cs-special">⭐ Special</div>
                       )}
                     </div>
 
-                    {/* Content */}
-                    <div style={{ padding: '15px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <h5 style={{
-                        fontWeight: '700',
-                        marginBottom: '5px',
-                        color: '#1a1a2e',
-                        fontSize: '1rem'
-                      }}>
-                        {product.name}
-                      </h5>
-                      <p style={{
-                        color: '#777',
-                        fontSize: '0.85rem',
-                        marginBottom: '10px',
-                        minHeight: '40px'
-                      }}>
-                        {product.description || 'Premium cashew'}
-                      </p>
-                      <div style={{ marginTop: 'auto' }}>
-                        <Badge
-                          style={{
-                            background: '#f0e6e6',
-                            color: '#DC143C',
-                            padding: '5px 15px',
-                            borderRadius: '20px',
-                            fontSize: '11px',
-                            fontWeight: '600',
-                            marginBottom: '10px',
-                            display: 'inline-block'
-                          }}
-                        >
-                          {product.category}
-                        </Badge>
-                        
-                        {/* Inquiry Button */}
+                    <div className="cs-body">
+                      <h5 className="cs-name">{product.name}</h5>
+                      <p className="cs-desc">{product.description || 'Premium cashew'}</p>
+                      <div className="cs-foot">
+                        <Badge className="cs-cat">{product.category}</Badge>
                         <Button
                           onClick={() => handleInquiryClick(product)}
-                          style={{
-                            background: '#DC143C',
-                            border: 'none',
-                            padding: '8px 15px',
-                            borderRadius: '50px',
-                            fontWeight: '600',
-                            fontSize: '13px',
-                            width: '100%',
-                            marginTop: '10px',
-                            transition: 'all 0.3s ease',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '8px'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.transform = 'scale(1.02)';
-                            e.target.style.boxShadow = '0 4px 12px rgba(220,20,60,0.3)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.transform = 'scale(1)';
-                            e.target.style.boxShadow = 'none';
-                          }}
+                          className="cs-inquiry"
                         >
                           <span>📞</span> Inquiry Now
                         </Button>
@@ -480,78 +322,42 @@ const CashewProducts = () => {
             </Row>
           )}
 
+          {/* Footer count */}
+          <div className="text-center mt-5">
+            <p className="cs-count">
+              Showing {filteredProducts.length} of {CASHEW_PRODUCTS.length} products
+            </p>
+          </div>
+
           {/* Inquiry Modal */}
-          <Modal
-            show={showInquiryModal}
-            onHide={() => {
-              setShowInquiryModal(false);
-              resetForm();
-            }}
-            size="lg"
-            centered
-          >
-            <Modal.Header closeButton style={{ borderBottom: '2px solid #f0e6e6' }}>
-              <Modal.Title style={{ color: '#DC143C', fontWeight: '700' }}>
+          <Modal show={showInquiryModal} onHide={closeModal} size="lg" centered>
+            <Modal.Header closeButton className="cs-modal-head">
+              <Modal.Title className="cs-modal-title">
                 📝 Inquiry About {selectedProduct?.name || 'Product'}
               </Modal.Title>
             </Modal.Header>
-            <Modal.Body style={{ padding: '30px' }}>
-              {/* Product Details Display with Image Preview */}
+            <Modal.Body className="cs-modal-body">
               {selectedProduct && (
-                <div style={{
-                  background: '#FFF8F8',
-                  padding: '15px',
-                  borderRadius: '10px',
-                  marginBottom: '20px',
-                  borderLeft: '4px solid #DC143C'
-                }}>
-                  <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
-                    <div style={{
-                      width: '80px',
-                      height: '80px',
-                      borderRadius: '8px',
-                      overflow: 'hidden',
-                      background: '#f0f0f0',
-                      flexShrink: 0
-                    }}>
-                      <img
-                        src={selectedProduct.image}
-                        alt={selectedProduct.name}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'contain',
-                          padding: '5px'
-                        }}
-                        onError={(e) => {
-                          e.target.src = 'https://via.placeholder.com/80x80/FF6B6B/FFFFFF?text=Surya+Cashew';
-                        }}
-                      />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <h6 style={{ fontWeight: '700', color: '#1a1a2e' }}>Product Details:</h6>
-                      <p style={{ marginBottom: '5px' }}>
-                        <strong>Product:</strong> {selectedProduct.name}
-                      </p>
-                      <p style={{ marginBottom: '5px' }}>
-                        <strong>Category:</strong> {selectedProduct.category}
-                      </p>
-                      <p style={{ marginBottom: '5px' }}>
-                        <strong>Description:</strong> {selectedProduct.description || 'N/A'}
-                      </p>
-                      <p style={{ marginBottom: '5px' }}>
-                        <strong>SKU:</strong> {selectedProduct.sku || 'N/A'}
-                      </p>
-                      <p style={{ marginBottom: '5px', color: '#DC143C', fontWeight: 'bold' }}>
-                        <strong>Price:</strong> ₹{selectedProduct.price || 'Contact for price'}
-                      </p>
-                      <p style={{ marginBottom: '0', fontSize: '12px', color: '#666' }}>
-                        <strong>Image URL:</strong> {window.location.origin + selectedProduct.image}
-                      </p>
-                      <p style={{ marginBottom: '0', fontSize: '12px', color: '#666' }}>
-                        <strong>Product URL:</strong> {window.location.origin + `/cashew/${generateProductSlug(selectedProduct.name, selectedProduct.id)}`}
-                      </p>
-                    </div>
+                <div className="cs-modal-product">
+                  <div className="cs-modal-img">
+                    <img
+                      src={imageErrors[selectedProduct.id] ? FALLBACK_IMG : selectedProduct.image}
+                      alt={selectedProduct.name}
+                      onError={(e) => {
+                        e.target.src = FALLBACK_IMG;
+                        e.target.onerror = null;
+                      }}
+                    />
+                  </div>
+                  <div className="cs-modal-details">
+                    <h6 className="cs-modal-sub">Product Details:</h6>
+                    <p><strong>Product:</strong> {selectedProduct.name}</p>
+                    <p><strong>Category:</strong> {selectedProduct.category}</p>
+                    <p><strong>Description:</strong> {selectedProduct.description || 'N/A'}</p>
+                    <p><strong>SKU:</strong> {selectedProduct.sku || 'N/A'}</p>
+                    <p className="cs-price"><strong>Price:</strong> ₹{selectedProduct.price || 'Contact for price'}</p>
+                    <p className="cs-url"><strong>Image URL:</strong> {origin() + selectedProduct.image}</p>
+                    <p className="cs-url"><strong>Product URL:</strong> {origin() + `/cashew/${slugify(selectedProduct.name, selectedProduct.id)}`}</p>
                   </div>
                 </div>
               )}
@@ -560,7 +366,7 @@ const CashewProducts = () => {
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label style={{ fontWeight: '600' }}>Full Name *</Form.Label>
+                      <Form.Label className="cs-label">Full Name *</Form.Label>
                       <Form.Control
                         type="text"
                         name="name"
@@ -568,13 +374,13 @@ const CashewProducts = () => {
                         onChange={handleInputChange}
                         placeholder="Enter your full name"
                         required
-                        style={{ borderRadius: '10px', padding: '12px' }}
+                        className="cs-input"
                       />
                     </Form.Group>
                   </Col>
                   <Col md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label style={{ fontWeight: '600' }}>Email Address *</Form.Label>
+                      <Form.Label className="cs-label">Email Address *</Form.Label>
                       <Form.Control
                         type="email"
                         name="email"
@@ -582,26 +388,26 @@ const CashewProducts = () => {
                         onChange={handleInputChange}
                         placeholder="Enter your email"
                         required
-                        style={{ borderRadius: '10px', padding: '12px' }}
+                        className="cs-input"
                       />
                     </Form.Group>
                   </Col>
                 </Row>
 
                 <Form.Group className="mb-3">
-                  <Form.Label style={{ fontWeight: '600' }}>Address</Form.Label>
+                  <Form.Label className="cs-label">Address</Form.Label>
                   <Form.Control
                     type="text"
                     name="address"
                     value={inquiryData.address}
                     onChange={handleInputChange}
                     placeholder="Enter your address"
-                    style={{ borderRadius: '10px', padding: '12px' }}
+                    className="cs-input"
                   />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label style={{ fontWeight: '600' }}>Message *</Form.Label>
+                  <Form.Label className="cs-label">Message *</Form.Label>
                   <Form.Control
                     as="textarea"
                     rows="4"
@@ -610,81 +416,288 @@ const CashewProducts = () => {
                     onChange={handleInputChange}
                     placeholder="Write your message here..."
                     required
-                    style={{ borderRadius: '10px', padding: '12px' }}
+                    className="cs-input"
                   />
                 </Form.Group>
 
-                <div style={{
-                  background: '#f8f9fa',
-                  padding: '15px',
-                  borderRadius: '10px',
-                  marginBottom: '20px'
-                }}>
-                  <p style={{ marginBottom: '0', fontSize: '14px', color: '#666' }}>
-                    <strong>📌 Note:</strong> Product details, image URL, and product page URL will be included with your inquiry.
-                  </p>
+                <div className="cs-note">
+                  <p><strong>📌 Note:</strong> Product details, image URL, and product page URL will be included with your inquiry.</p>
                 </div>
 
-                <div className="d-flex gap-3 flex-wrap">
-                  <Button
-                    onClick={handleEmailSubmit}
-                    style={{
-                      background: '#DC143C',
-                      border: 'none',
-                      padding: '12px 30px',
-                      borderRadius: '50px',
-                      fontWeight: '600',
-                      flex: 1,
-                      minWidth: '150px'
-                    }}
-                    disabled={!inquiryData.name || !inquiryData.email || !inquiryData.message}
-                  >
+                <div className="cs-actions">
+                  <Button onClick={handleEmailSubmit} className="cs-btn email" disabled={!canSubmit}>
                     ✉️ Send via Email
                   </Button>
-                  <Button
-                    onClick={handleWhatsAppSubmit}
-                    style={{
-                      background: '#25D366',
-                      border: 'none',
-                      padding: '12px 30px',
-                      borderRadius: '50px',
-                      fontWeight: '600',
-                      flex: 1,
-                      minWidth: '150px'
-                    }}
-                    disabled={!inquiryData.name || !inquiryData.email || !inquiryData.message}
-                  >
+                  <Button onClick={handleWhatsAppSubmit} className="cs-btn wa" disabled={!canSubmit}>
                     💬 Send via WhatsApp
                   </Button>
-                  <Button
-                    variant="outline-secondary"
-                    onClick={() => {
-                      setShowInquiryModal(false);
-                      resetForm();
-                    }}
-                    style={{
-                      borderRadius: '50px',
-                      padding: '12px 30px',
-                      fontWeight: '600'
-                    }}
-                  >
+                  <Button variant="outline-secondary" onClick={closeModal} className="cs-btn cancel">
                     Cancel
                   </Button>
                 </div>
               </Form>
             </Modal.Body>
           </Modal>
-
-          {/* Footer */}
-          <div className="text-center mt-5">
-            <p style={{ color: '#777' }}>
-              Showing {filteredProducts.length} of {cashewProducts.length} products
-            </p>
-          </div>
         </Container>
       </section>
     </>
   );
 };
+
+/* ═══════════════════════════════════════════════════════════
+   CSS — light yellow theme, GPU-friendly hover, no gradients
+   ═══════════════════════════════════════════════════════════ */
+const CSS = `
+  :root{
+    --y:#F2B705; --y-dk:#C99400; --y-lt:#FFD966;
+    --ink:#1a1600; --ink-soft:#2e2a1a;
+    --mut:#6b6248; --line:rgba(120,100,20,.14);
+    --cream:#FFFDF5; --cream-2:#FFF8E1;
+  }
+
+  .cs-shell{
+    padding:80px 0;
+    background:var(--cream);
+    min-height:100vh;
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  }
+  .accent{color:var(--y-dk);}
+
+  .cs-h1{
+    font-family:Georgia,'Times New Roman',serif;
+    font-size:clamp(2.2rem,5vw,3.5rem);
+    font-weight:800;
+    color:var(--ink);
+    line-height:1.1;
+    margin-bottom:.5rem;
+  }
+  .cs-lead{color:var(--mut);font-size:1.05rem;margin:0;}
+
+  /* Search */
+  .cs-search{
+    border-radius:50px !important;
+    padding:12px 20px !important;
+    border:2px solid var(--line) !important;
+    background:#fff;
+    font-size:.95rem;
+  }
+  .cs-search:focus{
+    border-color:var(--y) !important;
+    box-shadow:0 0 0 3px rgba(242,183,5,.18) !important;
+  }
+
+  /* Filter chips */
+  .cs-filters{display:flex;flex-wrap:wrap;gap:8px;}
+  .cs-chip{
+    border-radius:50px !important;
+    padding:8px 22px !important;
+    font-weight:600 !important;
+    font-size:.85rem !important;
+    border:1.5px solid var(--y-dk) !important;
+    background:transparent !important;
+    color:var(--y-dk) !important;
+    transition:background-color .15s ease,color .15s ease !important;
+  }
+  .cs-chip:hover{background:var(--cream-2) !important;}
+  .cs-chip.on{
+    background:var(--y) !important;
+    color:var(--ink) !important;
+    border-color:var(--y) !important;
+  }
+
+  /* Product card */
+  .cs-card{
+    background:#fff;
+    border-radius:15px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    transition:transform .25s ease;
+    will-change:transform;
+  }
+  .cs-card:hover{transform:translate3d(0,-4px,0);}
+
+  .cs-img-wrap{
+    position:relative;
+    width:100%;
+    height:270px;
+    background:var(--cream-2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+  .cs-img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    object-position:center;
+    padding:10px;
+  }
+
+  .cs-special{
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:var(--y);
+    color:var(--ink);
+    padding:5px 14px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
+  }
+
+  .cs-body{
+    padding:16px;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+  }
+  .cs-name{
+    font-weight:700;
+    margin-bottom:6px;
+    color:var(--ink);
+    font-size:1rem;
+  }
+  .cs-desc{
+    color:var(--mut);
+    font-size:.85rem;
+    margin-bottom:12px;
+    min-height:40px;
+    line-height:1.5;
+  }
+  .cs-foot{margin-top:auto;}
+
+  .cs-cat{
+    background:var(--cream-2) !important;
+    color:var(--y-dk) !important;
+    padding:5px 14px !important;
+    border-radius:20px !important;
+    font-size:11px !important;
+    font-weight:600 !important;
+    display:inline-block;
+    border:1px solid var(--line);
+  }
+
+  .cs-inquiry{
+    background:var(--y) !important;
+    color:var(--ink) !important;
+    border:none !important;
+    padding:9px 15px !important;
+    border-radius:50px !important;
+    font-weight:600 !important;
+    font-size:13px !important;
+    width:100%;
+    margin-top:12px;
+    display:flex !important;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    transition:background-color .15s ease !important;
+  }
+  .cs-inquiry:hover{background:var(--y-dk) !important;color:var(--ink) !important;}
+
+  /* Empty state */
+  .cs-empty-h{color:var(--ink);font-weight:700;}
+  .cs-empty-p{color:var(--mut);}
+  .cs-count{color:var(--mut);margin:0;}
+
+  /* Modal */
+  .cs-modal-head{border-bottom:2px solid var(--line) !important;}
+  .cs-modal-title{color:var(--y-dk) !important;font-weight:700;}
+  .cs-modal-body{padding:24px !important;}
+
+  .cs-modal-product{
+    background:var(--cream-2);
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+    border-left:4px solid var(--y);
+    display:flex;
+    gap:15px;
+    align-items:flex-start;
+  }
+  .cs-modal-img{
+    width:80px;height:80px;
+    border-radius:8px;
+    overflow:hidden;
+    background:#fff;
+    flex-shrink:0;
+    border:1px solid var(--line);
+  }
+  .cs-modal-img img{
+    width:100%;height:100%;
+    object-fit:contain;padding:4px;
+  }
+  .cs-modal-details{flex:1;min-width:0;}
+  .cs-modal-sub{font-weight:700;color:var(--ink);margin-bottom:6px;}
+  .cs-modal-details p{margin-bottom:4px;font-size:.9rem;color:#4a4126;}
+  .cs-price{color:var(--y-dk) !important;font-weight:700;}
+  .cs-url{font-size:.72rem !important;color:var(--mut) !important;word-break:break-all;}
+
+  .cs-label{font-weight:600;color:var(--ink);font-size:.9rem;}
+  .cs-input{
+    border-radius:10px !important;
+    padding:10px 12px !important;
+    border:1px solid var(--line) !important;
+    font-size:.92rem;
+  }
+  .cs-input:focus{
+    border-color:var(--y) !important;
+    box-shadow:0 0 0 3px rgba(242,183,5,.18) !important;
+  }
+
+  .cs-note{
+    background:var(--cream-2);
+    padding:12px 15px;
+    border-radius:10px;
+    margin-bottom:20px;
+    border:1px solid var(--line);
+  }
+  .cs-note p{margin:0;font-size:.85rem;color:var(--mut);}
+
+  .cs-actions{display:flex;gap:12px;flex-wrap:wrap;}
+  .cs-btn{
+    border:none !important;
+    padding:12px 28px !important;
+    border-radius:50px !important;
+    font-weight:600 !important;
+    flex:1;
+    min-width:150px;
+    transition:background-color .15s ease !important;
+    font-size:.9rem !important;
+  }
+  .cs-btn.email{background:var(--y) !important;color:var(--ink) !important;}
+  .cs-btn.email:hover{background:var(--y-dk) !important;}
+  .cs-btn.wa{background:#25D366 !important;color:#fff !important;}
+  .cs-btn.wa:hover{background:#1EA952 !important;}
+  .cs-btn.cancel{
+    background:transparent !important;
+    color:var(--mut) !important;
+    border:1px solid var(--line) !important;
+    flex:0 0 auto !important;
+  }
+  .cs-btn.cancel:hover{background:var(--cream-2) !important;color:var(--ink) !important;}
+
+  .cs-btn:disabled{opacity:.5;cursor:not-allowed;}
+
+  /* Responsive */
+  @media (max-width:767px){
+    .cs-shell{padding:50px 0;}
+    .cs-img-wrap{height:220px;}
+    .cs-actions{flex-direction:column;}
+    .cs-btn{width:100%;flex:none !important;}
+    .cs-modal-product{flex-direction:column;align-items:stretch;}
+    .cs-modal-img{width:100%;height:120px;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .cs-card,.cs-chip,.cs-inquiry,.cs-btn{transition:none !important;}
+    .cs-card:hover{transform:none;}
+  }
+`;
 
 export default CashewProducts;
