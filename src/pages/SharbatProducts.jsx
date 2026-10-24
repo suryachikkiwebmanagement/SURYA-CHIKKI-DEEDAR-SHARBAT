@@ -6,7 +6,7 @@ const SHARBAT_PRODUCTS = [
   {
     id: 1,
     name: 'Orange Sharbat',
-    image: '/images/sharbat/images(18).jpeg',
+    image: '/images/sharbat/images(18).webp',
     category: 'Fruit Sharbat',
     isSpecial: true,
     description: 'Refreshing orange sharbat with natural flavors. Made from real oranges for a tangy and sweet taste.',
@@ -17,7 +17,7 @@ const SHARBAT_PRODUCTS = [
   {
     id: 2,
     name: 'Mango Sharbat',
-    image: '/images/sharbat/images(19).jpeg',
+    image: '/images/sharbat/images(19).webp',
     category: 'Fruit Sharbat',
     isSpecial: true,
     description: 'Authentic mango sharbat made from real mangoes. Rich, flavorful, and perfect for traditional summer drinks.',
@@ -28,7 +28,7 @@ const SHARBAT_PRODUCTS = [
   {
     id: 3,
     name: 'Varyali Sharbat',
-    image: '/images/sharbat/images(20).jpeg',
+    image: '/images/sharbat/images(20).webp',
     category: 'Traditional Sharbat',
     isSpecial: false,
     description: 'Traditional Varyali sharbat with unique taste. A classic Indian summer drink with cooling properties.',
@@ -39,7 +39,7 @@ const SHARBAT_PRODUCTS = [
   {
     id: 4,
     name: 'Nimbu Sharbat',
-    image: '/images/sharbat/images(21).jpeg',
+    image: '/images/sharbat/images(21).webp',
     category: 'Fruit Sharbat',
     isSpecial: false,
     description: 'Tangy lemon sharbat perfect for summer. Made with fresh lemons and natural ingredients.',
@@ -50,7 +50,7 @@ const SHARBAT_PRODUCTS = [
   {
     id: 5,
     name: 'Shabi Rose Sharbat',
-    image: '/images/sharbat/images(22).jpeg',
+    image: '/images/sharbat/images(22).webp',
     category: 'Flower Sharbat',
     isSpecial: false,
     description: 'Fragrant rose sharbat with a delightful aroma. Made from premium rose petals for a royal taste.',
@@ -61,7 +61,7 @@ const SHARBAT_PRODUCTS = [
   {
     id: 6,
     name: 'Special Deedar Sharbat',
-    image: '/images/sharbat/images(23).jpeg',
+    image: '/images/sharbat/images(23).webp',
     category: 'Traditional Sharbat',
     isSpecial: false,
     description: 'Cooling khus sharbat perfect for hot summers. Made with natural khus extract.',
@@ -72,7 +72,7 @@ const SHARBAT_PRODUCTS = [
   {
     id: 7,
     name: 'Pineapple Sharbat',
-    image: '/images/sharbat/images(24).jpeg',
+    image: '/images/sharbat/images(24).webp',
     category: 'Pine apple Sharbat',
     isSpecial: false,
     description: 'Sweet and tangy pineapple sharbat with natural pineapple flavor.',
