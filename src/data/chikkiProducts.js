@@ -1,4 +1,11 @@
 ﻿export const chikkiProducts = [
+   {
+    id: 51,
+    name: "Peanut Dry Fruit Chikki",
+    image: '/images/chikki/newarrive1.jpg', // ✅ Changed to public path
+    category: "Chikki",
+    isSpecial: false
+  },
   {
     id: 1,
     name: "Till Chikki",
@@ -112,4 +119,5 @@
     category: "Chikki",
     isSpecial: false
   }
+
 ];

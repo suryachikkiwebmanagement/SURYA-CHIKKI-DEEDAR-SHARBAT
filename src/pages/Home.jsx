@@ -15,6 +15,7 @@ import pcBanner4 from '../assets/images/pcbanners  (4).png';
 import pcBanner5 from '../assets/images/pcbanners  (3).png';
 import pcBanner6 from '../assets/images/pcbanners  (5).png';
 import followUsImg from '../assets/images/followusimg.png';
+import newArriveImg from '../assets/images/newarrive1.jpg';
 
 import tcimages1 from '../assets/images/tcimages (1).png';
 import tcimages2 from '../assets/images/tcimages (2).png';
@@ -90,7 +91,11 @@ const Home = () => {
   const [isChikkiAnimating, setIsChikkiAnimating] = useState(false);
   const [nutsCurrentIndex, setNutsCurrentIndex] = useState(0);
   const [isNutsAnimating, setIsNutsAnimating] = useState(false);
+  const [showNewArrival, setShowNewArrival] = useState(false);
 
+  /* ═══════════════════════════════════════════════════════════
+     EFFECTS
+     ═══════════════════════════════════════════════════════════ */
   useEffect(() => {
     const interval = setInterval(() => {
       if (!isChikkiAnimating) {
@@ -113,6 +118,30 @@ const Home = () => {
     return () => clearInterval(interval);
   }, [isNutsAnimating]);
 
+  // Show New Arrivals popup on every page load/refresh
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowNewArrival(true);
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Lock body scroll when popup is open
+  useEffect(() => {
+    if (showNewArrival) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showNewArrival]);
+
+  /* ═══════════════════════════════════════════════════════════
+     HANDLERS
+     ═══════════════════════════════════════════════════════════ */
   const goToPreviousChikki = () => {
     if (!isChikkiAnimating) {
       setIsChikkiAnimating(true);
@@ -527,6 +556,56 @@ const Home = () => {
           </div>
         </section>
 
+        {/* ══════ 9. NEW ARRIVAL POPUP ══════ */}
+        {showNewArrival && (
+          <div className="na-overlay" onClick={() => setShowNewArrival(false)}>
+            <div className="na-modal" onClick={(e) => e.stopPropagation()}>
+              <button
+                className="na-close"
+                onClick={() => setShowNewArrival(false)}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+
+              <div className="na-badge">
+                <span className="na-badge-dot" />
+                Just Launched
+              </div>
+
+              <div className="na-img-wrap">
+                <img src={newArriveImg} alt="New Arrival" />
+              </div>
+
+              <div className="na-content">
+                <span className="na-eyebrow">New Arrival</span>
+                <h3 className="na-title">
+                  Freshly <em>Crafted</em> Just for You
+                </h3>
+                <p className="na-desc">
+                  Discover our newest premium chikki — made with the finest ingredients
+                  and the same 50-year legacy of taste.
+                </p>
+                <div className="na-actions">
+                  <Link
+                    to="/chikki"
+                    className="na-cta-primary"
+                    onClick={() => setShowNewArrival(false)}
+                  >
+                    Shop Now <FaArrowRight style={{ fontSize: '.75em' }} />
+                  </Link>
+                  <button
+                    className="na-cta-ghost"
+                    onClick={() => setShowNewArrival(false)}
+                  >
+                    Maybe Later
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
@@ -884,6 +963,112 @@ const Home = () => {
         .social-btn.fb:hover{background:#1877F2;}
         .social-btn.wa:hover{background:#25D366;}
 
+        /* ══════════ NEW ARRIVAL POPUP ══════════ */
+        .na-overlay{
+          position:fixed;inset:0;z-index:9999;
+          background:rgba(26,20,0,.72);
+          backdrop-filter:blur(4px);
+          display:flex;align-items:center;justify-content:center;
+          padding:20px;
+          animation:naFadeIn .35s ease both;
+        }
+        @keyframes naFadeIn{from{opacity:0;}to{opacity:1;}}
+
+        .na-modal{
+          position:relative;
+          width:100%;max-width:440px;
+          max-height:92vh;overflow-y:auto;
+          background:#fff;
+          border-radius:26px;
+          overflow:hidden;
+          box-shadow:0 30px 80px rgba(0,0,0,.35);
+          animation:naPopIn .45s cubic-bezier(.2,.9,.3,1.2) both;
+        }
+        @keyframes naPopIn{
+          from{opacity:0;transform:scale(.9) translateY(20px);}
+          to{opacity:1;transform:scale(1) translateY(0);}
+        }
+
+        .na-close{
+          position:absolute;top:14px;right:14px;z-index:5;
+          width:38px;height:38px;border-radius:50%;
+          background:rgba(255,255,255,.95);
+          border:1px solid rgba(120,100,20,.15);
+          color:#1a1600;font-size:.9rem;font-weight:700;
+          cursor:pointer;display:flex;align-items:center;justify-content:center;
+          transition:background .2s ease,transform .2s ease;
+          box-shadow:0 4px 12px rgba(0,0,0,.12);
+        }
+        .na-close:hover{background:var(--yellow);transform:rotate(90deg);}
+
+        .na-badge{
+          position:absolute;top:14px;left:14px;z-index:5;
+          display:inline-flex;align-items:center;gap:8px;
+          padding:8px 16px;border-radius:999px;
+          background:linear-gradient(135deg,var(--yellow),var(--yellow-lt));
+          color:#1a1600;font-size:.66rem;font-weight:800;
+          letter-spacing:.14em;text-transform:uppercase;
+          box-shadow:0 4px 14px rgba(242,183,5,.45);
+        }
+        .na-badge-dot{
+          width:7px;height:7px;border-radius:50%;background:#1a1600;
+          animation:naPulse 1.6s ease-in-out infinite;
+        }
+        @keyframes naPulse{
+          0%,100%{opacity:1;transform:scale(1);}
+          50%{opacity:.4;transform:scale(.7);}
+        }
+
+        .na-img-wrap{
+          width:100%;height:260px;overflow:hidden;
+          background:var(--cream-dk);
+          display:flex;align-items:center;justify-content:center;
+        }
+        .na-img-wrap img{
+          width:100%;height:100%;object-fit:cover;object-position:center;
+          display:block;transition:transform .6s ease;
+        }
+        .na-modal:hover .na-img-wrap img{transform:scale(1.05);}
+
+        .na-content{padding:28px 28px 30px;text-align:center;}
+
+        .na-eyebrow{
+          display:inline-block;
+          font-size:.66rem;font-weight:700;letter-spacing:.28em;
+          text-transform:uppercase;color:var(--yellow-dk);
+          margin-bottom:10px;
+        }
+        .na-title{
+          font-family:Georgia,'Times New Roman',serif;
+          font-size:1.55rem;font-weight:700;line-height:1.2;
+          margin:0 0 12px;color:var(--ink);letter-spacing:-.01em;
+        }
+        .na-title em{font-style:italic;color:var(--yellow-dk);font-weight:800;}
+        .na-desc{
+          font-size:.9rem;line-height:1.65;color:var(--mut);
+          margin:0 0 22px;
+        }
+
+        .na-actions{display:flex;flex-direction:column;gap:10px;}
+        .na-cta-primary{
+          display:inline-flex;align-items:center;justify-content:center;gap:8px;
+          padding:15px 28px;border-radius:999px;
+          background:var(--yellow);color:#1a1600;
+          font-size:.78rem;font-weight:800;letter-spacing:.14em;
+          text-transform:uppercase;text-decoration:none;border:none;cursor:pointer;
+          transition:background .25s ease,transform .25s ease;
+        }
+        .na-cta-primary:hover{background:var(--yellow-dk);color:#1a1600;transform:translateY(-2px);}
+        .na-cta-ghost{
+          padding:13px 28px;border-radius:999px;
+          background:transparent;color:var(--mut);
+          border:1px solid var(--line);
+          font-size:.74rem;font-weight:700;letter-spacing:.12em;
+          text-transform:uppercase;cursor:pointer;
+          transition:background .2s ease,color .2s ease;
+        }
+        .na-cta-ghost:hover{background:var(--soft-2);color:var(--ink);}
+
         /* ══════════ RESPONSIVE ══════════ */
         @media (max-width:991px){
           .hero-item{height:auto;min-height:88vh;max-height:none;aspect-ratio:9/16;}
@@ -925,6 +1110,11 @@ const Home = () => {
           .follow-title{font-size:2rem;}
           .follow-avatar{width:120px;height:120px;}
           .partner-header h3{font-size:1.3rem;}
+          .na-modal{max-width:100%;border-radius:20px;}
+          .na-img-wrap{height:210px;}
+          .na-content{padding:22px 22px 24px;}
+          .na-title{font-size:1.3rem;}
+          .na-desc{font-size:.85rem;}
         }
 
         @media (prefers-reduced-motion:reduce){
