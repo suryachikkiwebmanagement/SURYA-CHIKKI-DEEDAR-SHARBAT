@@ -11,8 +11,7 @@ const SHARBAT_PRODUCTS = [
     isSpecial: true,
     description: 'Refreshing orange sharbat with natural flavors. Made from real oranges for a tangy and sweet taste.',
     sku: 'SHR-001',
-    flavor: 'Orange',
-    price: '150.00'
+    flavor: 'Orange'
   },
   {
     id: 2,
@@ -22,8 +21,7 @@ const SHARBAT_PRODUCTS = [
     isSpecial: true,
     description: 'Authentic mango sharbat made from real mangoes. Rich, flavorful, and perfect for traditional summer drinks.',
     sku: 'SHR-002',
-    flavor: 'Mango',
-    price: '160.00'
+    flavor: 'Mango'
   },
   {
     id: 3,
@@ -33,8 +31,7 @@ const SHARBAT_PRODUCTS = [
     isSpecial: false,
     description: 'Traditional Varyali sharbat with unique taste. A classic Indian summer drink with cooling properties.',
     sku: 'SHR-003',
-    flavor: 'Varyali',
-    price: '170.00'
+    flavor: 'Varyali'
   },
   {
     id: 4,
@@ -44,8 +41,7 @@ const SHARBAT_PRODUCTS = [
     isSpecial: false,
     description: 'Tangy lemon sharbat perfect for summer. Made with fresh lemons and natural ingredients.',
     sku: 'SHR-004',
-    flavor: 'Lemon',
-    price: '140.00'
+    flavor: 'Lemon'
   },
   {
     id: 5,
@@ -55,8 +51,7 @@ const SHARBAT_PRODUCTS = [
     isSpecial: false,
     description: 'Fragrant rose sharbat with a delightful aroma. Made from premium rose petals for a royal taste.',
     sku: 'SHR-005',
-    flavor: 'Rose',
-    price: '155.00'
+    flavor: 'Rose'
   },
   {
     id: 6,
@@ -66,8 +61,7 @@ const SHARBAT_PRODUCTS = [
     isSpecial: false,
     description: 'Cooling khus sharbat perfect for hot summers. Made with natural khus extract.',
     sku: 'SHR-006',
-    flavor: 'Khus',
-    price: '165.00'
+    flavor: 'Khus'
   },
   {
     id: 7,
@@ -77,8 +71,7 @@ const SHARBAT_PRODUCTS = [
     isSpecial: false,
     description: 'Sweet and tangy pineapple sharbat with natural pineapple flavor.',
     sku: 'SHR-007',
-    flavor: 'Pineapple',
-    price: '145.00'
+    flavor: 'Pineapple'
   }
 ];
 
@@ -139,9 +132,7 @@ const SharbatProducts = () => {
           manufacturer: { '@type': 'Organization', name: 'Surya Chikki' },
           offers: {
             '@type': 'Offer',
-            price: product.price || '0.00',
             priceCurrency: 'INR',
-            priceValidUntil: '2026-12-31',
             availability: 'https://schema.org/InStock',
             url: productUrl,
             seller: { '@type': 'Organization', name: 'Surya Chikki' }
@@ -210,7 +201,6 @@ const SharbatProducts = () => {
         `Flavor: ${product.flavor || 'N/A'}\n` +
         `Description: ${product.description || 'N/A'}\n` +
         `SKU: ${product.sku || 'N/A'}\n` +
-        `Price: ₹${product.price || 'Contact for price'}\n` +
         `Product Image: ${imageUrl}\n` +
         `Product URL: ${productUrl}\n\n` +
         `Please provide more information about pricing and availability.`
@@ -233,7 +223,6 @@ const SharbatProducts = () => {
       `Product Details:\nProduct: ${selectedProduct.name}\nCategory: ${selectedProduct.category}\n` +
       `Flavor: ${selectedProduct.flavor || 'N/A'}\nDescription: ${selectedProduct.description || 'N/A'}\n` +
       `SKU: ${selectedProduct.sku || 'N/A'}\n` +
-      `Price: ₹${selectedProduct.price || 'Contact for price'}\n` +
       `Product Image URL: ${imageUrl}\nProduct Page URL: ${productUrl}\n\n` +
       `Message:\n${message}`;
     window.location.href = `mailto:suryachikki.admin@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -250,7 +239,6 @@ const SharbatProducts = () => {
       `*Product Details:*\nProduct: ${selectedProduct.name}\nCategory: ${selectedProduct.category}\n` +
       `Flavor: ${selectedProduct.flavor || 'N/A'}\nDescription: ${selectedProduct.description || 'N/A'}\n` +
       `SKU: ${selectedProduct.sku || 'N/A'}\n` +
-      `Price: ₹${selectedProduct.price || 'Contact for price'}\n` +
       `Product Image: ${imageUrl}\nProduct Page: ${productUrl}\n\n` +
       `*Message:*\n${message}`;
     const waUrl = `https://wa.me/919429946364?text=${encodeURIComponent(text)}`;
@@ -392,7 +380,6 @@ const SharbatProducts = () => {
                     <p><strong>Category:</strong> {selectedProduct.category}</p>
                     <p><strong>Flavor:</strong> {selectedProduct.flavor || 'N/A'}</p>
                     <p><strong>Description:</strong> {selectedProduct.description || 'N/A'}</p>
-                    <p className="sh-price"><strong>Price:</strong> ₹{selectedProduct.price || 'Contact for price'}</p>
                     <p className="sh-url"><strong>Product URL:</strong> {origin() + `/sharbat-product/${slugify(selectedProduct.name, selectedProduct.id)}`}</p>
                   </div>
                 </div>
@@ -686,7 +673,6 @@ const CSS = `
   .sh-modal-details{flex:1;min-width:0;}
   .sh-modal-sub{font-weight:700;color:var(--ink);margin-bottom:6px;}
   .sh-modal-details p{margin-bottom:4px;font-size:.9rem;color:#4a4126;}
-  .sh-price{color:var(--y-dk) !important;font-weight:700;}
   .sh-url{font-size:.72rem !important;color:var(--mut) !important;word-break:break-all;}
 
   .sh-label{font-weight:600;color:var(--ink);font-size:.9rem;}

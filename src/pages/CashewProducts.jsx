@@ -6,52 +6,47 @@ const CASHEW_PRODUCTS = [
   {
     id: 2,
     name: 'Blueberry Cashew',
-    image: '/images/cashew/images (2).webp',
+    image: '/images/cashew/images(2).webp',
     category: 'Flavoured Cashew',
     isSpecial: true,
     description: 'Sweet-tart blueberry-coated cashews with a bright fruity crunch. Perfect for a fresh, modern snack.',
-    sku: 'CSH-002',
-    price: '540.00'
+    sku: 'CSH-002'
   },
   {
     id: 4,
     name: 'Classic Salted Cashew',
-    image: '/images/cashew/images (4).webp',
+    image: '/images/cashew/images(4).webp',
     category: 'Salted Cashew',
     isSpecial: false,
     description: 'Our signature classic salted cashews. Simple, honest, and perfectly roasted with just the right salt balance.',
-    sku: 'CSH-003',
-    price: '450.00'
+    sku: 'CSH-003'
   },
   {
     id: 6,
     name: 'Cheese Jalapeno Cashew',
-    image: '/images/cashew/images (6).webp',
+    image: '/images/cashew/images(6).webp',
     category: 'Flavoured Cashew',
     isSpecial: true,
     description: 'Savory cheese and spicy jalapeno flavoured cashews — an addictive, punchy snack that keeps you coming back.',
-    sku: 'CSH-004',
-    price: '500.00'
+    sku: 'CSH-004'
   },
   {
     id: 7,
     name: 'Guava Twist Cashew',
-    image: '/images/cashew/images (7).webp',
+    image: '/images/cashew/images(7).webp',
     category: 'Flavoured Cashew',
     isSpecial: true,
     description: 'Tangy guava-coated cashews with a tropical twist. Sweet, fruity, and utterly refreshing.',
-    sku: 'CSH-005',
-    price: '510.00'
+    sku: 'CSH-005'
   },
   {
     id: 8,
     name: 'Peri Peri Lime Cashew',
-    image: '/images/cashew/images (8).webp',
+    image: '/images/cashew/images(8).webp',
     category: 'Flavoured Cashew',
     isSpecial: true,
     description: 'Zesty lime meets bold peri peri spice — a fiery, tangy cashew snack with an unforgettable kick.',
-    sku: 'CSH-006',
-    price: '520.00'
+    sku: 'CSH-006'
   }
 ];
 
@@ -112,9 +107,7 @@ const CashewProducts = () => {
           manufacturer: { '@type': 'Organization', name: 'Surya Chikki' },
           offers: {
             '@type': 'Offer',
-            price: product.price || '0.00',
             priceCurrency: 'INR',
-            priceValidUntil: '2026-12-31',
             availability: 'https://schema.org/InStock',
             url: productUrl,
             seller: { '@type': 'Organization', name: 'Surya Chikki' }
@@ -178,7 +171,6 @@ const CashewProducts = () => {
         `Category: ${product.category}\n` +
         `Description: ${product.description || 'N/A'}\n` +
         `SKU: ${product.sku || 'N/A'}\n` +
-        `Price: ₹${product.price || 'Contact for price'}\n` +
         `Product Image: ${imageUrl}\n` +
         `Product URL: ${productUrl}\n\n` +
         `Please provide more information about pricing and availability.`
@@ -200,7 +192,6 @@ const CashewProducts = () => {
       `Name: ${name}\nEmail: ${email}\nAddress: ${address}\n\n` +
       `Product Details:\nProduct: ${selectedProduct.name}\nCategory: ${selectedProduct.category}\n` +
       `Description: ${selectedProduct.description || 'N/A'}\nSKU: ${selectedProduct.sku || 'N/A'}\n` +
-      `Price: ₹${selectedProduct.price || 'Contact for price'}\n` +
       `Product Image URL: ${imageUrl}\nProduct Page URL: ${productUrl}\n\n` +
       `Message:\n${message}`;
     window.location.href = `mailto:suryachikki.admin@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -216,7 +207,6 @@ const CashewProducts = () => {
       `*Name:* ${name}\n*Email:* ${email}\n*Address:* ${address}\n\n` +
       `*Product Details:*\nProduct: ${selectedProduct.name}\nCategory: ${selectedProduct.category}\n` +
       `Description: ${selectedProduct.description || 'N/A'}\nSKU: ${selectedProduct.sku || 'N/A'}\n` +
-      `Price: ₹${selectedProduct.price || 'Contact for price'}\n` +
       `Product Image: ${imageUrl}\nProduct Page: ${productUrl}\n\n` +
       `*Message:*\n${message}`;
     const waUrl = `https://wa.me/919429946364?text=${encodeURIComponent(text)}`;
@@ -355,7 +345,6 @@ const CashewProducts = () => {
                     <p><strong>Category:</strong> {selectedProduct.category}</p>
                     <p><strong>Description:</strong> {selectedProduct.description || 'N/A'}</p>
                     <p><strong>SKU:</strong> {selectedProduct.sku || 'N/A'}</p>
-                    <p className="cs-price"><strong>Price:</strong> ₹{selectedProduct.price || 'Contact for price'}</p>
                     <p className="cs-url"><strong>Image URL:</strong> {origin() + selectedProduct.image}</p>
                     <p className="cs-url"><strong>Product URL:</strong> {origin() + `/cashew/${slugify(selectedProduct.name, selectedProduct.id)}`}</p>
                   </div>
@@ -635,7 +624,6 @@ const CSS = `
   .cs-modal-details{flex:1;min-width:0;}
   .cs-modal-sub{font-weight:700;color:var(--ink);margin-bottom:6px;}
   .cs-modal-details p{margin-bottom:4px;font-size:.9rem;color:#4a4126;}
-  .cs-price{color:var(--y-dk) !important;font-weight:700;}
   .cs-url{font-size:.72rem !important;color:var(--mut) !important;word-break:break-all;}
 
   .cs-label{font-weight:600;color:var(--ink);font-size:.9rem;}

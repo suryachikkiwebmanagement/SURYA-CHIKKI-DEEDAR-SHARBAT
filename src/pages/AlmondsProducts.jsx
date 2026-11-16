@@ -6,32 +6,29 @@ const ALMOND_PRODUCTS = [
   {
     id: 1,
     name: 'Rose Almonds',
-    image: '/images/almonds/images (1).webp',
+    image: '/images/almonds/images(1).webp',
     category: 'Flavoured Almonds',
     isSpecial: true,
     description: 'Delicately rose-infused almonds with a fragrant floral finish — a premium, romantic snacking experience.',
-    sku: 'ALM-001',
-    price: '540.00'
+    sku: 'ALM-001'
   },
   {
     id: 3,
     name: 'Classic Salted Almonds',
-    image: '/images/almonds/images (3).webp',
+    image: '/images/almonds/images(3).webp',
     category: 'Salted Almonds',
     isSpecial: false,
     description: 'Classic lightly-salted almonds — the timeless, everyday snack. Crunchy, wholesome, and satisfying.',
-    sku: 'ALM-002',
-    price: '480.00'
+    sku: 'ALM-002'
   },
   {
     id: 5,
     name: 'Coffee Mocha Almonds',
-    image: '/images/almonds/images (5).webp',
+    image: '/images/almonds/images(5).webp',
     category: 'Flavoured Almonds',
     isSpecial: true,
     description: 'Rich coffee-mocha coated almonds — a bold, chocolatey, espresso-kissed snack for coffee lovers.',
-    sku: 'ALM-003',
-    price: '560.00'
+    sku: 'ALM-003'
   }
 ];
 
@@ -93,9 +90,7 @@ const AlmondsProducts = () => {
           manufacturer: { '@type': 'Organization', name: 'Surya Chikki' },
           offers: {
             '@type': 'Offer',
-            price: product.price || '0.00',
             priceCurrency: 'INR',
-            priceValidUntil: '2026-12-31',
             availability: 'https://schema.org/InStock',
             url: productUrl,
             seller: { '@type': 'Organization', name: 'Surya Chikki' }
@@ -159,7 +154,6 @@ const AlmondsProducts = () => {
         `Category: ${product.category}\n` +
         `Description: ${product.description || 'N/A'}\n` +
         `SKU: ${product.sku || 'N/A'}\n` +
-        `Price: ₹${product.price || 'Contact for price'}\n` +
         `Product Image: ${imageUrl}\n` +
         `Product URL: ${productUrl}\n\n` +
         `Please provide more information about pricing and availability.`
@@ -181,7 +175,6 @@ const AlmondsProducts = () => {
       `Name: ${name}\nEmail: ${email}\nAddress: ${address}\n\n` +
       `Product Details:\nProduct: ${selectedProduct.name}\nCategory: ${selectedProduct.category}\n` +
       `Description: ${selectedProduct.description || 'N/A'}\nSKU: ${selectedProduct.sku || 'N/A'}\n` +
-      `Price: ₹${selectedProduct.price || 'Contact for price'}\n` +
       `Product Image URL: ${imageUrl}\nProduct Page URL: ${productUrl}\n\n` +
       `Message:\n${message}`;
     window.location.href = `mailto:suryachikki.admin@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -197,7 +190,6 @@ const AlmondsProducts = () => {
       `*Name:* ${name}\n*Email:* ${email}\n*Address:* ${address}\n\n` +
       `*Product Details:*\nProduct: ${selectedProduct.name}\nCategory: ${selectedProduct.category}\n` +
       `Description: ${selectedProduct.description || 'N/A'}\nSKU: ${selectedProduct.sku || 'N/A'}\n` +
-      `Price: ₹${selectedProduct.price || 'Contact for price'}\n` +
       `Product Image: ${imageUrl}\nProduct Page: ${productUrl}\n\n` +
       `*Message:*\n${message}`;
     const waUrl = `https://wa.me/919429946364?text=${encodeURIComponent(text)}`;
@@ -337,7 +329,6 @@ const AlmondsProducts = () => {
                     <p><strong>Category:</strong> {selectedProduct.category}</p>
                     <p><strong>Description:</strong> {selectedProduct.description || 'N/A'}</p>
                     <p><strong>SKU:</strong> {selectedProduct.sku || 'N/A'}</p>
-                    <p className="al-price"><strong>Price:</strong> ₹{selectedProduct.price || 'Contact for price'}</p>
                     <p className="al-url"><strong>Image URL:</strong> {origin() + selectedProduct.image}</p>
                     <p className="al-url"><strong>Product URL:</strong> {origin() + `/almonds/${slugify(selectedProduct.name, selectedProduct.id)}`}</p>
                   </div>
@@ -617,7 +608,6 @@ const CSS = `
   .al-modal-details{flex:1;min-width:0;}
   .al-modal-sub{font-weight:700;color:var(--ink);margin-bottom:6px;}
   .al-modal-details p{margin-bottom:4px;font-size:.9rem;color:#4a4126;}
-  .al-price{color:var(--y-dk) !important;font-weight:700;}
   .al-url{font-size:.72rem !important;color:var(--mut) !important;word-break:break-all;}
 
   .al-label{font-weight:600;color:var(--ink);font-size:.9rem;}

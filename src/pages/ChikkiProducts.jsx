@@ -3,24 +3,24 @@ import { Container, Row, Col, Form, Button, Badge, Modal } from 'react-bootstrap
 
 // ─── Static data hoisted ───
 const CHIKKI_PRODUCTS = [
-  { id: 17, name: 'Biscout Chikki', image: '/images/chikki/newarrive1.webp', category: 'Chikki', isSpecial: false, description: 'New Ariivel.', sku: 'CHK-008', price: '240.00' },
-  { id: 1, name: 'Till Chikki', image: '/images/chikki/images(1).webp', category: 'Chikki', isSpecial: true, description: 'Traditional sesame seed chikki with authentic taste. Made with premium quality sesame seeds and jaggery for a perfect crunch.', sku: 'CHK-001', price: '120.00' },
-  { id: 17, name: 'Rajgiri Peanut chikki', image: '/images/chikki/images(40).webp', category: 'Chikki', isSpecial: true, description: 'Special Rajgiri Peanut chikki with authentic taste. Made with premium quality sesame seeds and jaggery for a perfect crunch.', sku: 'CHK-001', price: '120.00' },
-  { id: 2, name: 'Peanut Dry Fruit Chikki', image: '/images/chikki/images(2).webp', category: 'Chikki', isSpecial: false, description: 'Crunchy peanut with dry fruits for extra nutrition. A healthy blend of peanuts, almonds, and cashews with jaggery.', sku: 'CHK-002', price: '180.00' },
-  { id: 3, name: 'Dates Chikki', image: '/images/chikki/images(3).webp', category: 'Chikki', isSpecial: true, description: 'Sweet and healthy dates chikki with natural sweetness. Made with premium dates and nuts for an energy-boosting snack.', sku: 'CHK-003', price: '200.00' },
-  { id: 4, name: 'Signature Melts', image: '/images/chikki/images(4).webp', category: 'Bar', isSpecial: false, description: 'Melt in your mouth delight. Creamy and smooth texture that dissolves instantly.', sku: 'BAR-001', price: '150.00' },
-  { id: 5, name: 'Dates Peanut Butter Bar', image: '/images/chikki/images(5).webp', category: 'Bar', isSpecial: false, description: 'Perfect blend of dates and peanut butter. Rich, creamy, and packed with protein.', sku: 'BAR-002', price: '175.00' },
-  { id: 6, name: 'Peanut Crush Chikki Almond / Cashew', image: '/images/chikki/images(6).webp', category: 'Bar', isSpecial: true, description: 'Best of both textures with almonds and cashews. Premium nuts for an elevated chikki experience.', sku: 'BAR-003', price: '220.00' },
-  { id: 7, name: 'Creamy Bites Bar', image: '/images/chikki/images(7).webp', category: 'Bar', isSpecial: true, description: 'Rich almond chikki with a perfect crunch. Made with premium almonds for a satisfying bite.', sku: 'BAR-004', price: '195.00' },
-  { id: 8, name: 'Peanut Chikki Classic', image: '/images/chikki/images(8).webp', category: 'Chikki', isSpecial: false, description: 'Classic peanut chikki made with premium peanuts. The traditional recipe that everyone loves.', sku: 'CHK-004', price: '100.00' },
-  { id: 9, name: 'Peanut Chikki Premium', image: '/images/chikki/images(9).webp', category: 'Chikki', isSpecial: false, description: 'Premium peanut chikki with extra crunch. Made with handpicked peanuts for superior quality.', sku: 'CHK-005', price: '130.00' },
-  { id: 10, name: 'Peanut Chikki Special', image: '/images/chikki/images(8).webp', category: 'Chikki', isSpecial: false, description: 'Traditional peanut chikki with special recipe. Passed down through generations since 1975.', sku: 'CHK-006', price: '140.00' },
-  { id: 11, name: 'Peanut Chikki Jar', image: '/images/chikki/images(10).webp', category: 'Jar', isSpecial: false, description: 'Rich chocolate bar in premium jar packaging. Perfect for gifting and special occasions.', sku: 'JAR-001', price: '250.00' },
-  { id: 12, name: 'Peanut Crush Chikki Jar', image: '/images/chikki/images(11).webp', category: 'Jar', isSpecial: false, description: 'Special recipe peanut chikki in jar. Made with crushed peanuts for unique texture.', sku: 'JAR-002', price: '280.00' },
-  { id: 13, name: 'Till Chikki Premium Jar', image: '/images/chikki/images(32).webp', category: 'Jar', isSpecial: false, description: 'Premium sesame chikki in elegant jar. A luxurious treat for sesame lovers.', sku: 'JAR-003', price: '300.00' },
-  { id: 14, name: 'Topra Chikki', image: '/images/chikki/images(33).webp', category: 'Chikki', isSpecial: false, description: 'Traditional topra chikki with authentic taste. Made with special topra variety of jaggery.', sku: 'CHK-007', price: '160.00' },
-  { id: 15, name: 'Topra Chikki Jar', image: '/images/chikki/images(34).webp', category: 'Jar', isSpecial: false, description: 'Special topra chikki in premium jar. Preserved for long-lasting freshness.', sku: 'JAR-004', price: '320.00' },
-  { id: 16, name: 'Pistachio Chikki', image: '/images/chikki/images(35).webp', category: 'Chikki', isSpecial: false, description: 'Perfect crunch and creamy texture with pistachios. A premium chikki made with imported pistachios.', sku: 'CHK-008', price: '240.00' },
+  { id: 17, name: 'Biscout Chikki', image: '/images/chikki/newarrive1.webp', category: 'Chikki', isSpecial: false, description: 'New Ariivel.', sku: 'CHK-008' },
+  { id: 1, name: 'Till Chikki', image: '/images/chikki/images(1).webp', category: 'Chikki', isSpecial: true, description: 'Traditional sesame seed chikki with authentic taste. Made with premium quality sesame seeds and jaggery for a perfect crunch.', sku: 'CHK-001' },
+  { id: 17, name: 'Rajgiri Peanut chikki', image: '/images/chikki/images(40).webp', category: 'Chikki', isSpecial: true, description: 'Special Rajgiri Peanut chikki with authentic taste. Made with premium quality sesame seeds and jaggery for a perfect crunch.', sku: 'CHK-001' },
+  { id: 2, name: 'Peanut Dry Fruit Chikki', image: '/images/chikki/images(2).webp', category: 'Chikki', isSpecial: false, description: 'Crunchy peanut with dry fruits for extra nutrition. A healthy blend of peanuts, almonds, and cashews with jaggery.', sku: 'CHK-002' },
+  { id: 3, name: 'Dates Chikki', image: '/images/chikki/images(3).webp', category: 'Chikki', isSpecial: true, description: 'Sweet and healthy dates chikki with natural sweetness. Made with premium dates and nuts for an energy-boosting snack.', sku: 'CHK-003' },
+  { id: 4, name: 'Signature Melts', image: '/images/chikki/images(4).webp', category: 'Bar', isSpecial: false, description: 'Melt in your mouth delight. Creamy and smooth texture that dissolves instantly.', sku: 'BAR-001' },
+  { id: 5, name: 'Dates Peanut Butter Bar', image: '/images/chikki/images(5).webp', category: 'Bar', isSpecial: false, description: 'Perfect blend of dates and peanut butter. Rich, creamy, and packed with protein.', sku: 'BAR-002' },
+  { id: 6, name: 'Peanut Crush Chikki Almond / Cashew', image: '/images/chikki/images(6).webp', category: 'Bar', isSpecial: true, description: 'Best of both textures with almonds and cashews. Premium nuts for an elevated chikki experience.', sku: 'BAR-003' },
+  { id: 7, name: 'Creamy Bites Bar', image: '/images/chikki/images(7).webp', category: 'Bar', isSpecial: true, description: 'Rich almond chikki with a perfect crunch. Made with premium almonds for a satisfying bite.', sku: 'BAR-004' },
+  { id: 8, name: 'Peanut Chikki Classic', image: '/images/chikki/images(8).webp', category: 'Chikki', isSpecial: false, description: 'Classic peanut chikki made with premium peanuts. The traditional recipe that everyone loves.', sku: 'CHK-004' },
+  { id: 9, name: 'Peanut Chikki Premium', image: '/images/chikki/images(9).webp', category: 'Chikki', isSpecial: false, description: 'Premium peanut chikki with extra crunch. Made with handpicked peanuts for superior quality.', sku: 'CHK-005' },
+  { id: 10, name: 'Peanut Chikki Special', image: '/images/chikki/images(8).webp', category: 'Chikki', isSpecial: false, description: 'Traditional peanut chikki with special recipe. Passed down through generations since 1975.', sku: 'CHK-006' },
+  { id: 11, name: 'Peanut Chikki Jar', image: '/images/chikki/images(10).webp', category: 'Jar', isSpecial: false, description: 'Rich chocolate bar in premium jar packaging. Perfect for gifting and special occasions.', sku: 'JAR-001' },
+  { id: 12, name: 'Peanut Crush Chikki Jar', image: '/images/chikki/images(11).webp', category: 'Jar', isSpecial: false, description: 'Special recipe peanut chikki in jar. Made with crushed peanuts for unique texture.', sku: 'JAR-002' },
+  { id: 13, name: 'Till Chikki Premium Jar', image: '/images/chikki/images(32).webp', category: 'Jar', isSpecial: false, description: 'Premium sesame chikki in elegant jar. A luxurious treat for sesame lovers.', sku: 'JAR-003' },
+  { id: 14, name: 'Topra Chikki', image: '/images/chikki/images(33).webp', category: 'Chikki', isSpecial: false, description: 'Traditional topra chikki with authentic taste. Made with special topra variety of jaggery.', sku: 'CHK-007' },
+  { id: 15, name: 'Topra Chikki Jar', image: '/images/chikki/images(34).webp', category: 'Jar', isSpecial: false, description: 'Special topra chikki in premium jar. Preserved for long-lasting freshness.', sku: 'JAR-004' },
+  { id: 16, name: 'Pistachio Chikki', image: '/images/chikki/images(35).webp', category: 'Chikki', isSpecial: false, description: 'Perfect crunch and creamy texture with pistachios. A premium chikki made with imported pistachios.', sku: 'CHK-008' },
 ];
 
 const CATEGORIES = ['All', ...new Set(CHIKKI_PRODUCTS.map(p => p.category))];
@@ -80,9 +80,7 @@ const ChikkiProducts = () => {
           manufacturer: { '@type': 'Organization', name: 'Surya Chikki' },
           offers: {
             '@type': 'Offer',
-            price: product.price || '0.00',
             priceCurrency: 'INR',
-            priceValidUntil: '2026-12-31',
             availability: 'https://schema.org/InStock',
             url: productUrl,
             seller: { '@type': 'Organization', name: 'Surya Chikki' }
@@ -146,7 +144,6 @@ const ChikkiProducts = () => {
         `Category: ${product.category}\n` +
         `Description: ${product.description || 'N/A'}\n` +
         `SKU: ${product.sku || 'N/A'}\n` +
-        `Price: ₹${product.price || 'Contact for price'}\n` +
         `Product Image: ${imageUrl}\n` +
         `Product URL: ${productUrl}\n\n` +
         `Please provide more information about pricing and availability.`
@@ -168,7 +165,6 @@ const ChikkiProducts = () => {
       `Name: ${name}\nEmail: ${email}\nAddress: ${address}\n\n` +
       `Product Details:\nProduct: ${selectedProduct.name}\nCategory: ${selectedProduct.category}\n` +
       `Description: ${selectedProduct.description || 'N/A'}\nSKU: ${selectedProduct.sku || 'N/A'}\n` +
-      `Price: ₹${selectedProduct.price || 'Contact for price'}\n` +
       `Product Image URL: ${imageUrl}\nProduct Page URL: ${productUrl}\n\n` +
       `Message:\n${message}`;
     window.location.href = `mailto:suryachikki.admin@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -184,7 +180,6 @@ const ChikkiProducts = () => {
       `*Name:* ${name}\n*Email:* ${email}\n*Address:* ${address}\n\n` +
       `*Product Details:*\nProduct: ${selectedProduct.name}\nCategory: ${selectedProduct.category}\n` +
       `Description: ${selectedProduct.description || 'N/A'}\nSKU: ${selectedProduct.sku || 'N/A'}\n` +
-      `Price: ₹${selectedProduct.price || 'Contact for price'}\n` +
       `Product Image: ${imageUrl}\nProduct Page: ${productUrl}\n\n` +
       `*Message:*\n${message}`;
     const waUrl = `https://wa.me/919429946364?text=${encodeURIComponent(text)}`;
@@ -323,7 +318,6 @@ const ChikkiProducts = () => {
                     <p><strong>Category:</strong> {selectedProduct.category}</p>
                     <p><strong>Description:</strong> {selectedProduct.description || 'N/A'}</p>
                     <p><strong>SKU:</strong> {selectedProduct.sku || 'N/A'}</p>
-                    <p className="ck-price"><strong>Price:</strong> ₹{selectedProduct.price || 'Contact for price'}</p>
                     <p className="ck-url"><strong>Image URL:</strong> {origin() + selectedProduct.image}</p>
                     <p className="ck-url"><strong>Product URL:</strong> {origin() + `/product/${slugify(selectedProduct.name, selectedProduct.id)}`}</p>
                   </div>
@@ -603,7 +597,6 @@ const CSS = `
   .ck-modal-details{flex:1;min-width:0;}
   .ck-modal-sub{font-weight:700;color:var(--ink);margin-bottom:6px;}
   .ck-modal-details p{margin-bottom:4px;font-size:.9rem;color:#4a4126;}
-  .ck-price{color:var(--y-dk) !important;font-weight:700;}
   .ck-url{font-size:.72rem !important;color:var(--mut) !important;word-break:break-all;}
 
   .ck-label{font-weight:600;color:var(--ink);font-size:.9rem;}
