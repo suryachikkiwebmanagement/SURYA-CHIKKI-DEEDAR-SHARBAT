@@ -3,7 +3,7 @@ import { Container, Row, Col, Form, Button, Badge, Modal } from 'react-bootstrap
 
 // ─── Static data hoisted ───
 const CHIKKI_PRODUCTS = [
-  { id: 17, name: 'Biscout Chikki', image: '/images/chikki/newarrive1.jpg', category: 'Chikki', isSpecial: false, description: 'New Ariivel.', sku: 'CHK-008', price: '240.00' },
+  { id: 17, name: 'Biscout Chikki', image: '/images/chikki/newarrive1.webp', category: 'Chikki', isSpecial: false, description: 'New Ariivel.', sku: 'CHK-008', price: '240.00' },
   { id: 1, name: 'Till Chikki', image: '/images/chikki/images(1).webp', category: 'Chikki', isSpecial: true, description: 'Traditional sesame seed chikki with authentic taste. Made with premium quality sesame seeds and jaggery for a perfect crunch.', sku: 'CHK-001', price: '120.00' },
   { id: 17, name: 'Rajgiri Peanut chikki', image: '/images/chikki/images(40).webp', category: 'Chikki', isSpecial: true, description: 'Special Rajgiri Peanut chikki with authentic taste. Made with premium quality sesame seeds and jaggery for a perfect crunch.', sku: 'CHK-001', price: '120.00' },
   { id: 2, name: 'Peanut Dry Fruit Chikki', image: '/images/chikki/images(2).webp', category: 'Chikki', isSpecial: false, description: 'Crunchy peanut with dry fruits for extra nutrition. A healthy blend of peanuts, almonds, and cashews with jaggery.', sku: 'CHK-002', price: '180.00' },

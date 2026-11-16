@@ -15,7 +15,7 @@ import pcBanner4 from '../assets/images/pcbanners  (4).png';
 import pcBanner5 from '../assets/images/pcbanners  (3).png';
 import pcBanner6 from '../assets/images/pcbanners  (5).png';
 import followUsImg from '../assets/images/followusimg.png';
-import newArriveImg from '../assets/images/newarrive1.jpg';
+import newArriveImg from '../assets/images/newarrive1.webp';
 
 import tcimages1 from '../assets/images/tcimages (1).png';
 import tcimages2 from '../assets/images/tcimages (2).png';
